@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Node Debugger",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nodemon",
+      "program": "${workspaceRoot}/dist/main.js",
+      "restart": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "debug.javascript.terminalOptions": {
+        "skipFiles": ["node_modules/**", "data", "dist"]
+      }
+    }
+  ]
+}
