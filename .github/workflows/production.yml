@@ -12,13 +12,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
-    # Steps 表示将作为作业一部分执行的任务序列
     steps:
-      # 下载源码
-      - name: Checkout
-        uses: actions/checkout@v2
-
       # 部署到服务器
       - name: Deploy
         uses: appleboy/ssh-action@master # 使用ssh链接服务器
