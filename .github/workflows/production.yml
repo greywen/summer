@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@master
       - run: npm install
       - run: npm run build
-      - run: tar -zcvf ${{github.ref_name}}.tgz dist
+      - run: tar -zcvf ${{github.ref_name}}.tgz src package.json tsconfig.json tsconfig.build.json nest-cli.json
 
       # 发布 Release
       - name: Create Release
@@ -63,3 +63,5 @@ jobs:
             cd /root/summary-server
             wget https://github.com/graywenn/summary/releases/latest/download/${{github.ref_name}}.tgz -O ${{github.ref_name}}.tgz
             tar zxvf ${{github.ref_name}}.tgz
+            npm i
+            npm run build
