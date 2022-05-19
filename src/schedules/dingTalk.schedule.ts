@@ -10,7 +10,7 @@ export class DingTalkSchedule {
         private attendanceServive: AttendanceService
     ) { }
 
-    @Cron(config.job.reportRule, { name: 'DingTalkReportSchedule' })
+    @Cron(config.job.attendanceRule, { name: 'DingTalkReportSchedule' })
     async run() {
         let _date = moment().add(-1, "days").format("YYYY-MM-DD");
         console.log(`${_date} attendance updating...`);

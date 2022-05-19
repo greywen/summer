@@ -15,7 +15,7 @@ export class UserService {
         let timesheet = <ITimeSheetData[]>JSON.parse(data || "[]");
         const users = await FileData.readUsers();
         const user = users.find(x => x.name === username);
-        const todayTimeSheet = timesheet.find(x => x.name === user?.english_name && x.value);
+        const todayTimeSheet = timesheet.find(x => x.userid === user?.id && x.value);
         return todayTimeSheet;
     }
 
@@ -41,7 +41,6 @@ export class UserService {
         userAttendance.attendances.map((_attendance) => {
             _attendance.map(x => {
                 if (x.state == AttendanceState.L) {
-                    console.log(x.state);
                     attendanceLog.late += x.value;
                 } else if (x.state == AttendanceState.X) {
                     attendanceLog.notCommitReportCount += 1;

@@ -10,7 +10,7 @@ import { jwtModuleOptions, redisModuleOptions } from './modules';
 import { TimeSheetSocket } from './sockets';
 import { DingTalkSchedule, TimeSheetSchedule } from './schedules';
 import { AttendanceService, AuthService, DingTalkService, ReportService, UserService } from './services';
-import { JwtStrategy } from './strategys';
+import { JwtStrategy, WsGuard } from './strategys';
 
 @Module({
   imports: [
@@ -28,6 +28,7 @@ import { JwtStrategy } from './strategys';
     UserController
   ],
   providers: [
+    WsGuard,
     JwtStrategy,
     AppService, AttendanceService, DingTalkService, ReportService, AuthService, UserService,
     TimeSheetSocket,

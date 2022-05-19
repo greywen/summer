@@ -21,14 +21,12 @@ export class TimeSheetSchedule {
             return;
         }
         console.log("Saving TimeSheet...");
-        const client = this.redisService.getClient;
-        const _timesheet = await client().get("timesheets");
+        const _timesheet = await this.redisService.getClient().get("timesheets");
         let timesheets = <ITimeSheetData[]>JSON.parse(_timesheet || "[]");
-        let summary = await client().get("timesheet");
-        const result = await FileData.writeTimeSheet(currentDate.format("YYYY-MM-DD"), JSON.stringify({ users: timesheets, summary: summary }));
+        const result = await FileData.writeTimeSheet(currentDate.format("YYYY-MM-DD"), JSON.stringify({ users: timesheets }));
         if (result) {
+            await this.redisService.getClient().set("timesheets", "[]");
             console.log("Save TimeSheet successful!");
-            await client().set("timesheets", "[]");
         } else {
             console.log("Save TimeSheet Failed!");
         }

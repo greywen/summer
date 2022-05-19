@@ -1,0 +1,65 @@
+name: Production
+on:
+  # 在推送或拉送请求事件上触发工作流
+  push:
+    tags:
+      - 'v*'
+  # branches: [ main ]
+  # pull_request:
+  # branches: [ main ]
+
+# jobs 运行由一个或多个可以顺序或并行运行的作业组成
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    # Steps 表示将作为作业一部分执行的任务序列
+    steps:
+      # 下载源码
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # 打包构建
+      - name: Build
+        uses: actions/setup-node@master
+      - run: npm install
+      - run: npm run build
+      - run: tar -zcvf ${{github.ref_name}}.tgz dist
+
+      # 发布 Release
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }} # GitHub添加的Token
+        with:
+          tag_name: ${{github.ref_name}} # (tag)标签名称
+          release_name: ${{github.ref_name}}
+          draft: false # 是否是草稿
+          prerelease: false # 是否是预发布
+
+      # 上传构建结果到Release
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # 上传地址，通过创建Release获取到的
+          asset_path: ./${{github.ref_name}}.tgz # 要上传文件
+          asset_name: ${{github.ref_name}}.tgz # 上传后的文件名
+          asset_content_type: application/x-tar
+
+      # 部署到服务器
+      - name: Deploy
+        uses: appleboy/ssh-action@master # 使用ssh链接服务器
+        with:
+          host: ${{ secrets.SSH_HOST }} #配置的服务器地址
+          username: ${{ secrets.SSH_USERNAME }} #配置的服务器用户名
+          password: ${{ secrets.SSH_PASSWORD }} #配置的密码
+          port: ${{ secrets.SSH_PORT }}
+          script:
+            | # 执行命令（运行到服务器）cd：要确保服务器有这个目录； wget：下载上一步的build文件到服务器； tar：解压； 安装依赖；启动服务
+            cd /root/summary-server
+            wget https://github.com/graywenn/summary/releases/latest/download/${{github.ref_name}}.tgz -O ${{github.ref_name}}.tgz
+            tar zxvf ${{github.ref_name}}.tgz

@@ -5,6 +5,7 @@ export interface ISheetTemplate {
 }
 
 export interface ITimeSheetData {
+    userid: string;
     name: string;
     value?: string;
     groupid: number;

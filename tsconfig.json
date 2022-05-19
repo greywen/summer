@@ -26,7 +26,8 @@
       "@utils/*": ["./src/utils/*"],
       "@interfaces/*": ["./src/interfaces/*"],
       "@constants/*": ["./src/constants/*"],
-      "@dtos/*": ["./src/dtos/*"]
+      "@dtos/*": ["./src/dtos/*"],
+      "@strategys/*": ["./src/strategys/*"]
     }
   }
 }

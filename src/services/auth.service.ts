@@ -1,5 +1,4 @@
 import config from "@config/config";
-import FileData from "@core/files.data";
 import { IUserInfo, IUserTokenInfo } from "@interfaces/user";
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
@@ -25,14 +24,14 @@ export class AuthService {
                 username: data.preferred_username,
                 roles: data.realm_access.roles,
                 accessToken: result.access_token,
-                hiredDate: dingTalkUserInfo.hired_date,
+                hiredDate: dingTalkUserInfo?.hired_date,
             }
             return {
                 ...userToken,
                 refreshToken: result.refresh_token,
                 refreshExpires: result.refresh_expires_in,
                 expires: result.expires_at,
-                token: this.jwtService.sign({ ...userToken, userId: data.sub, dingTalkUserId: dingTalkUserInfo.id }),
+                token: this.jwtService.sign({ ...userToken, userId: data.sub, dingTalkUserId: dingTalkUserInfo?.id }),
             }
         } catch (e) {
             console.log("Login error: ", e);

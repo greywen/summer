@@ -17,9 +17,10 @@ export class TimeSheetController {
 
         let timeSheetData = users.filter(x => x.dept_name === dept_name).map(x => {
             return {
+                userid: x.id,
                 name: x.english_name,
                 groupid: x.groupid,
-                value: datas.find(d => d.name === x.english_name)?.value || null
+                value: datas.find(d => d.userid === x.id)?.value || null
             }
         });
 
