@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@master
       - run: npm install
       - run: npm run build
-      - run: tar -zcvf ${{github.ref_name}}.tgz dist
+      - run: tar -zcvf ${{github.ref_name}}.tgz dist node_modules
 
       # 发布 Release
       - name: Create Release
