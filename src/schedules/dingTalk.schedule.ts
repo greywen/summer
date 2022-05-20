@@ -1,26 +1,27 @@
+import SMSApi from "@apis/smsApi";
 import config from "@config/config";
 import { Injectable } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-import { AttendanceService } from "@services/attendance.service";
+import { ReportService } from "@services/report.service";
 import * as moment from "moment";
 
 @Injectable()
 export class DingTalkSchedule {
     constructor(
-        private attendanceServive: AttendanceService
+        private reportService: ReportService
     ) { }
 
-    @Cron(config.job.attendanceRule, { name: 'DingTalkReportSchedule' })
+    @Cron(config.job.reportRule, { name: 'DingTalkReportSchedule' })
     async run() {
-        let _date = moment().add(-1, "days").format("YYYY-MM-DD");
-        console.log(`${_date} attendance updating...`);
-        try {
-            const result = await this.attendanceServive.generateUserAttendances(_date);
-            console.log(result ? `${_date} attendance update successful!` : "Attendance update failed!");
+        const startTime = moment().format("YYYY-MM-DD 09:00:00");
+        const endTime = moment().format("YYYY-MM-DD 21:00:00");
+        let users = await this.reportService.getNotCommitReportUsers(startTime, endTime);
+        if (users.length === 0) {
+            console.log("Everyone submitted a report!");
         }
-        catch (err) {
-            console.log(err);
-            console.log("Attendance update failed!");
+        for (let user of users) {
+            console.log("Not commit report : ", user.name);
+            await SMSApi.sendNotCommitReportSMS({ name: user.name, phone: user.phone }, moment().format("YYYY-MM-DD"));
         }
     }
 }

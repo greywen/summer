@@ -14,8 +14,8 @@ export class ReportService {
 
         // 当天应交日报的员工id
         const usersAttendanceList = await this.dingTalkService.getAttendanceList(userIds, startTime, endTime);
-        const offDutyAttendanceUserId = usersAttendanceList
-            .filter((punch) => punch.checkType === AttendanceCheckType.OffDuty)
+        const onDutyAttendanceUserId = usersAttendanceList
+            .filter((punch) => punch.checkType === AttendanceCheckType.OnDuty)
             .map((item) => item.userId);
 
         const cursor = 0;
@@ -24,7 +24,7 @@ export class ReportService {
         let allReportedUserIds = reports.map((report) => report.creator_id);
         allReportedUserIds = unique<string>(allReportedUserIds);
         // 未交日报员工
-        let noReportUserIds = offDutyAttendanceUserId.filter((item: string) => !allReportedUserIds.includes(item));
+        let noReportUserIds = onDutyAttendanceUserId.filter((item: string) => !allReportedUserIds.includes(item));
 
 
         // 未交日志并且订阅日志提醒的用户
