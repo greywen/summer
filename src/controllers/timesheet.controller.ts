@@ -14,7 +14,7 @@ export class TimeSheetController {
         const users = await FileData.readUsers();
         const _timesheet = await this.redisService.getClient().get("timesheets");
         let datas = <ITimeSheetData[]>JSON.parse(_timesheet || "[]");
-
+        
         let timeSheetData = users.filter(x => x.dept_name === dept_name).map(x => {
             return {
                 userid: x.id,
