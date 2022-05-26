@@ -4,14 +4,14 @@ import { IAttendances, IUserAttendances } from "@interfaces/dingTalk";
 import { ITimeSheetData } from "@interfaces/timesheet";
 import { Injectable } from "@nestjs/common";
 import * as moment from "moment";
-import { RedisService } from "nestjs-redis";
+import { InjectRedis, Redis } from "@nestjs-modules/ioredis";
 
 @Injectable()
 export class UserService {
-    constructor(private readonly redisService: RedisService) { }
+    constructor(@InjectRedis() private readonly redis: Redis) { }
 
     async getTodayTimeSheet(username: string) {
-        const data = await this.redisService.getClient().get("timesheets");
+        const data = await this.redis.get("timesheets");
         let timesheet = <ITimeSheetData[]>JSON.parse(data || "[]");
         const users = await FileData.readUsers();
         const user = users.find(x => x.name === username);

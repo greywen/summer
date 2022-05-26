@@ -1,17 +1,17 @@
 import { ITimeSheetData } from '@interfaces/timesheet';
 import { UseGuards } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { RedisService } from 'nestjs-redis';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { Socket } from 'socket.io';
 import { WsGuard } from '../strategys';
 
 @UseGuards(WsGuard)
 @WebSocketGateway({ namespace: "timesheet", cors: "*" })
 export class TimeSheetSocket {
-    constructor(private readonly redisService: RedisService) { }
+    constructor(@InjectRedis() private readonly redis: Redis) { }
     @SubscribeMessage("sendMessage")
     async onEvent(client: Socket, data: ITimeSheetData) {
-        const _timesheet = await this.redisService.getClient().get("timesheets");
+        const _timesheet = await this.redis.get("timesheets");
         let timesheets = <ITimeSheetData[]>JSON.parse(_timesheet || "[]");
         let _data = timesheets.find(x => x.userid === data.userid);
         if (_data) {
@@ -22,7 +22,7 @@ export class TimeSheetSocket {
         } else {
             timesheets.push(data);
         }
-        await this.redisService.getClient().set("timesheets", JSON.stringify(timesheets));
+        await this.redis.set("timesheets", JSON.stringify(timesheets));
         client.broadcast.emit("receiveMessage", data);
     }
 }
