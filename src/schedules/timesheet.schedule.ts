@@ -4,12 +4,11 @@ import { ITimeSheetData } from "@interfaces/timesheet";
 import { Injectable } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import * as moment from "moment";
-import { RedisService } from "nestjs-redis";
-
+import { InjectRedis, Redis } from "@nestjs-modules/ioredis";
 @Injectable()
 export class TimeSheetSchedule {
     constructor(
-        private readonly redisService: RedisService
+        @InjectRedis() private readonly redis: Redis
     ) { }
 
     @Cron(config.job.saveTimeSheetRule, { name: 'SaveTimeSheetSchedule' })
@@ -21,11 +20,11 @@ export class TimeSheetSchedule {
             return;
         }
         console.log("Saving TimeSheet...");
-        const _timesheet = await this.redisService.getClient().get("timesheets");
+        const _timesheet = await this.redis.get("timesheets");
         let timesheets = <ITimeSheetData[]>JSON.parse(_timesheet || "[]");
         const result = await FileData.writeTimeSheet(currentDate.format("YYYY-MM-DD"), JSON.stringify({ users: timesheets }));
         if (result) {
-            await this.redisService.getClient().set("timesheets", "[]");
+            await this.redis.set("timesheets", "[]");
             console.log("Save TimeSheet successful!");
         } else {
             console.log("Save TimeSheet Failed!");

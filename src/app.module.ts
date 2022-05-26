@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RedisModule } from 'nestjs-redis'
+import { RedisModule } from '@nestjs-modules/ioredis';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -16,7 +16,7 @@ import { JwtStrategy, WsGuard } from './strategys';
   imports: [
     PassportModule,
     JwtModule.register(jwtModuleOptions),
-    RedisModule.register(redisModuleOptions),
+    RedisModule.forRoot(redisModuleOptions),
     ScheduleModule.forRoot(),
   ],
   controllers: [

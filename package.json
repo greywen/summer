@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@alicloud/pop-core": "^1.7.10",
+    "@nestjs-modules/ioredis": "^1.0.0",
     "@nestjs/common": "^8.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^8.0.0",
@@ -31,9 +32,9 @@
     "@nestjs/schedule": "^1.1.0",
     "@nestjs/websockets": "^8.4.4",
     "config": "^3.3.7",
+    "ioredis": "^5.0.5",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
-    "nestjs-redis": "git+https://github.com/skunight/nestjs-redis.git",
     "openid-client": "^5.1.6",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
