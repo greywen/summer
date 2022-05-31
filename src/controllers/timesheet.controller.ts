@@ -9,24 +9,21 @@ import * as moment from "moment";
 @Controller("timesheet")
 export class TimeSheetController {
     constructor(@InjectRedis() private readonly redis: Redis) { }
-    @Get("/get/:dept_name/:curDate")
-    async getTimesheet(@Param("dept_name") dept_name: string, @Param("curDate") curDate: string) {
+    @Get("/get/:dept_name/:date")
+    async getTimesheet(@Param("dept_name") dept_name: string, @Param("date") date: string) {
         const templateData = await FileData.readTimeSheetTemplate();
         const users = await FileData.readUsers();
         let datas = [];
 
-        if (curDate === moment().format("YYYY-MM-DD")) {
+        if (date === moment().format("YYYY-MM-DD")) {
             const _timesheet = await this.redis.get("timesheets");
             datas = <ITimeSheetData[]>JSON.parse(_timesheet || "[]");
         } else {
             try {
-                const result = await FileData.readTimeSheet(curDate);
+                const result = await FileData.readTimeSheet(date);
                 datas = <ITimeSheetData[]>JSON.parse(result).users;
-            } catch (err) {
-                console.log('error', err);
-            }
+            } catch (err) {}
         }
-
         let timeSheetData = users.filter(x => x.dept_name === dept_name).map(x => {
             return {
                 userid: x.id,
