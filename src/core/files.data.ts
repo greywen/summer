@@ -88,6 +88,10 @@ export default class FileData {
         return await FileData.tryCatchWriteFile(`./data/timesheets/${fileName}.json`, data, { encoding: "utf-8" });
     }
 
+    static readTimeSheet = async (date: string) => {
+        return await fs.readFileSync(`./data/timesheets/${date}.json`, { encoding: "utf-8" });
+    }
+
     static async tryCatchWriteFile(file: fs.PathOrFileDescriptor, data: string, options: fs.WriteFileOptions = FileData.fileDefaultOptions) {
         try {
             await fs.writeFileSync(file, data, options);
