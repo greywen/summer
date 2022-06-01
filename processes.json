@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "summary",
+      "name": "summer",
       "script": "./dist/main.js",
       "cwd": "./",
       "instances": "1",
