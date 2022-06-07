@@ -5,11 +5,25 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AttendanceController, AuthController, DingTalkController, TimeSheetController, UserController, InformController } from './controllers';
+import {
+  AttendanceController,
+  AuthController,
+  DingTalkController,
+  TimeSheetController,
+  UserController,
+  InformController,
+} from './controllers';
 import { jwtModuleOptions, redisModuleOptions } from './modules';
 import { TimeSheetSocket } from './sockets';
 import { DingTalkSchedule, TimeSheetSchedule } from './schedules';
-import { AttendanceService, AuthService, DingTalkService, ReportService, UserService, InformService } from './services';
+import {
+  AttendanceService,
+  AuthService,
+  DingTalkService,
+  ReportService,
+  UserService,
+  InformService,
+} from './services';
 import { JwtStrategy, WsGuard } from './strategys';
 
 @Module({
@@ -26,16 +40,22 @@ import { JwtStrategy, WsGuard } from './strategys';
     AuthController,
     TimeSheetController,
     UserController,
-    InformController
+    InformController,
   ],
   providers: [
     WsGuard,
     JwtStrategy,
-    AppService, AttendanceService, DingTalkService, ReportService, AuthService, UserService, InformService,
+    AppService,
+    AttendanceService,
+    DingTalkService,
+    ReportService,
+    AuthService,
+    UserService,
+    InformService,
     TimeSheetSocket,
-    DingTalkSchedule, TimeSheetSchedule
+    DingTalkSchedule,
+    TimeSheetSchedule,
   ],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class AppModule { }
-
+export class AppModule {}

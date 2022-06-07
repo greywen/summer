@@ -1,5 +1,5 @@
-import { IUserInfo } from "./user";
+import { IUserInfo } from './user';
 
 export interface NestRes {
-    user: IUserInfo
+  user: IUserInfo;
 }

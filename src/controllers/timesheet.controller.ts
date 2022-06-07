@@ -3,44 +3,49 @@ import FileData from '@core/files.data';
 import { ITimeSheetData } from '@interfaces/timesheet';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { AuthGuard } from '@nestjs/passport';
-import * as moment from "moment";
+import * as moment from 'moment';
 
-@UseGuards(AuthGuard("jwt"))
-@Controller("timesheet")
+@UseGuards(AuthGuard('jwt'))
+@Controller('timesheet')
 export class TimeSheetController {
-    constructor(@InjectRedis() private readonly redis: Redis) { }
-    @Get("/get/:dept_name/:date")
-    async getTimesheet(@Param("dept_name") dept_name: string, @Param("date") date: string) {
-        const templateData = await FileData.readTimeSheetTemplate();
-        const users = await FileData.readUsers();
-        let datas = [];
+  constructor(@InjectRedis() private readonly redis: Redis) {}
+  @Get('/get/:dept_name/:date')
+  async getTimesheet(
+    @Param('dept_name') dept_name: string,
+    @Param('date') date: string,
+  ) {
+    const templateData = await FileData.readTimeSheetTemplate();
+    const users = await FileData.readUsers();
+    let datas = [];
 
-        if (date === moment().format("YYYY-MM-DD")) {
-            const _timesheet = await this.redis.get("timesheets");
-            datas = <ITimeSheetData[]>JSON.parse(_timesheet || "[]");
-        } else {
-            try {
-                const result = await FileData.readTimeSheet(date);
-                datas = <ITimeSheetData[]>JSON.parse(result).users;
-            } catch (err) {}
-        }
-        let timeSheetData = users.filter(x => x.dept_name === dept_name).map(x => {
-            return {
-                userid: x.id,
-                name: x.english_name,
-                groupid: x.groupid,
-                value: datas.find(d => d.userid === x.id)?.value || null
-            }
-        });
-
+    if (date === moment().format('YYYY-MM-DD')) {
+      const _timesheet = await this.redis.get('timesheets');
+      datas = <ITimeSheetData[]>JSON.parse(_timesheet || '[]');
+    } else {
+      try {
+        const result = await FileData.readTimeSheet(date);
+        datas = <ITimeSheetData[]>JSON.parse(result).users;
+      } catch (err) {}
+    }
+    const timeSheetData = users
+      .filter((x) => x.dept_name === dept_name)
+      .map((x) => {
         return {
-            template: templateData,
-            data: timeSheetData
-        }
-    }
+          userid: x.id,
+          name: x.english_name,
+          groupid: x.groupid,
+          value: datas.find((d) => d.userid === x.id)?.value || null,
+        };
+      });
 
-    @Put("/update/template")
-    async authentication(@Body("template") template: string) {
-        return await FileData.writeTimeSheetTemplate(JSON.stringify(template));
-    }
+    return {
+      template: templateData,
+      data: timeSheetData,
+    };
+  }
+
+  @Put('/update/template')
+  async authentication(@Body('template') template: string) {
+    return await FileData.writeTimeSheetTemplate(JSON.stringify(template));
+  }
 }

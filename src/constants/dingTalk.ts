@@ -3,8 +3,8 @@
  * percent_hour：小时
  */
 export enum LeaveDurationUnitType {
-    percent_day,
-    percent_hour
+  percent_day,
+  percent_hour,
 }
 
 /**
@@ -18,29 +18,29 @@ export enum LeaveDurationUnitType {
  * 迟到 L 8
  */
 export enum AttendanceState {
-    "O" = 1,
-    "C" = 2,
-    "V" = 3,
-    "P" = 4,
-    "S" = 5,
-    "X" = 6,
-    "J" = 7,
-    "L" = 8
+  'O' = 1,
+  'C' = 2,
+  'V' = 3,
+  'P' = 4,
+  'S' = 5,
+  'X' = 6,
+  'J' = 7,
+  'L' = 8,
 }
 
 export enum AttendanceCheckType {
-    "OnDuty" = "OnDuty", // 上班
-    "OffDuty" = "OffDuty" // 下班
+  'OnDuty' = 'OnDuty', // 上班
+  'OffDuty' = 'OffDuty', // 下班
 }
 
 export enum TimeResultType {
-    "Normal" = "Normal", //正常
-    "Late" = "Late", // 迟到
-    "Early" = "Early", // 早退
+  'Normal' = 'Normal', //正常
+  'Late' = 'Late', // 迟到
+  'Early' = 'Early', // 早退
 }
 
 export enum GroupId {
-    "back-end" = 1,
-    "frond-end" = 2,
-    "test" = 3
+  'back-end' = 1,
+  'frond-end' = 2,
+  'test' = 3,
 }

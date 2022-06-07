@@ -1,1 +1,1 @@
-export * from "./dingTalk";
+export * from './dingTalk';
