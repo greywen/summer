@@ -18,6 +18,7 @@ export class IUserInfo {
   token: string;
   expires: number;
   refreshToken: string;
+  idToken: string;
   refreshExpires: number;
   accessToken: string;
   hiredDate: number;

@@ -30,6 +30,7 @@ export class AuthService {
         roles: data.realm_access.roles,
         accessToken: result.access_token,
         hiredDate: dingTalkUserInfo?.hired_date,
+        idToken: result.id_token,
       };
       return {
         ...userToken,
@@ -47,7 +48,10 @@ export class AuthService {
     }
   }
 
-  async signout() {
-    return await KcClient.client.endSessionUrl();
+  async signout(token: string) {
+    return await KcClient.client.endSessionUrl({
+      id_token_hint: token,
+      post_logout_redirect_uri: config.keycloak.logoutRedirectUri,
+    });
   }
 }

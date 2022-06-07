@@ -41,6 +41,7 @@ interface IConfig {
     clientSecret: string;
     scope: string;
     grantType: string;
+    logoutRedirectUri: string;
   };
   jwt: {
     secret: string;
@@ -89,6 +90,7 @@ export default <IConfig>{
     scope: config.get('keycloak.scope'),
     clientSecret: config.get('keycloak.clientSecret'),
     grantType: config.get('keycloak.grantType'),
+    logoutRedirectUri: config.get('keycloak.logoutRedirectUri'),
   },
   jwt: {
     secret: config.get('jwt.secret'),
