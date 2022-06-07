@@ -1,7 +1,9 @@
 import { IDepartments, IUser, IUserAttendances } from "@interfaces/dingTalk";
+import { IInfromData } from "@interfaces/inform";
 import { ISheetTemplate } from "@interfaces/timesheet";
 import * as fs from "fs";
 import * as moment from "moment";
+import { json } from "stream/consumers";
 
 export default class FileData {
     static fileDefaultOptions: fs.WriteFileOptions = {
@@ -97,5 +99,47 @@ export default class FileData {
             console.log(error);
             return false;
         }
+    }
+
+    static readInfromFile = async () => {
+        const data = await fs.readFileSync(`./data/inform.json`, { encoding: "utf-8" });
+        return <IInfromData[]>JSON.parse(data);
+    }
+
+    static writeInfromFile = async (data: any) => {
+        let datas = await FileData.readInfromFile();
+        datas.push(data);
+        return await FileData.tryCatchWriteFile(`./data/inform.json`, JSON.stringify(datas), { encoding: "utf-8" });
+    }
+
+    static delInfromFile = async (data: any) => {
+        let datas = await FileData.readInfromFile();
+        let resultData =  datas.filter((item)=> {
+            if (item.id !== data.id) {
+                return item
+            }
+        })        
+        return await FileData.tryCatchWriteFile(`./data/inform.json`, JSON.stringify(resultData), { encoding: "utf-8" });
+    }
+
+    static modifyInform = async (data: any) => {
+        let datas = await FileData.readInfromFile();
+        let index =  datas.findIndex((item)=> {return item.id === data.id})
+        datas[index] = data   
+        return await FileData.tryCatchWriteFile(`./data/inform.json`, JSON.stringify(datas), { encoding: "utf-8" });
+    }
+
+    static getCurInform = async () => {
+        let datas = await FileData.readInfromFile();
+        let today = moment().format("YYYY-MM-DD")
+        let resultData =  datas.filter((item)=> {
+            if (item.date[0] <= today && item.date[1] >= today) {
+                return item
+            }
+        })
+        resultData.sort((a,b)=> {
+            return a.weight - b.weight
+        })     
+        return resultData;
     }
 }
