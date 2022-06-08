@@ -158,7 +158,7 @@ export default class FileData {
     return <IInfromData[]>JSON.parse(data);
   };
 
-  static writeInfromFile = async (data: any) => {
+  static writeInfromFile = async (data: IInfromData) => {
     const datas = await FileData.readInfromFile();
     datas.push(data);
     return await FileData.tryCatchWriteFile(
@@ -168,10 +168,10 @@ export default class FileData {
     );
   };
 
-  static delInfromFile = async (data: any) => {
+  static deleteInfromFile = async (id: string) => {
     const datas = await FileData.readInfromFile();
     const resultData = datas.filter((item) => {
-      if (item.id !== data.id) {
+      if (item.id !== id) {
         return item;
       }
     });
@@ -182,7 +182,7 @@ export default class FileData {
     );
   };
 
-  static modifyInform = async (data: any) => {
+  static modifyInform = async (data: IInfromData) => {
     const datas = await FileData.readInfromFile();
     const index = datas.findIndex((item) => {
       return item.id === data.id;
@@ -195,7 +195,7 @@ export default class FileData {
     );
   };
 
-  static getCurInform = async () => {
+  static getCurrentInform = async () => {
     const datas = await FileData.readInfromFile();
     const today = moment().format('YYYY-MM-DD');
     const resultData = datas.filter((item) => {
@@ -204,7 +204,7 @@ export default class FileData {
       }
     });
     resultData.sort((a, b) => {
-      return a.weight - b.weight;
+      return b.weight - a.weight;
     });
     return resultData;
   };

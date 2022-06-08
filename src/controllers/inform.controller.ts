@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { InformService } from '@services/inform.service';
 
 @Controller('inform')
@@ -10,9 +10,9 @@ export class InformController {
     return await this.informService.getInforms();
   }
 
-  @Get('/getCur')
+  @Get('/getCurrent')
   async getCurInform() {
-    return await this.informService.getCurInform();
+    return await this.informService.getCurrentInform();
   }
 
   @Post('/add')
@@ -20,12 +20,12 @@ export class InformController {
     return await this.informService.addInform(body);
   }
 
-  @Post('/del')
-  async delInform(@Body() body) {
-    return await this.informService.delInform(body);
+  @Delete('/delete/:id')
+  async delInform(@Param('id') id: string) {
+    return await this.informService.deleteInform(id);
   }
 
-  @Post('/modify')
+  @Put('/modify')
   async modifyInform(@Body() body) {
     return await this.informService.modifyInform(body);
   }
