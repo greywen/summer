@@ -14,8 +14,8 @@ export class InformService {
   /**
    * 获取当前通知
    */
-  async getCurInform() {
-    const informs = await FileData.getCurInform();
+  async getCurrentInform() {
+    const informs = await FileData.getCurrentInform();
     return informs;
   }
 
@@ -32,8 +32,8 @@ export class InformService {
   /**
    * 删除通知
    */
-  async delInform(data: any) {
-    const informs = await FileData.delInfromFile(data);
+  async deleteInform(id: string) {
+    const informs = await FileData.deleteInfromFile(id);
     return informs;
   }
 
