@@ -44,5 +44,5 @@ jobs:
           script:
             | # 执行命令（运行到服务器）cd：要确保服务器有这个目录； wget：下载上一步的build文件到服务器； tar：解压； 安装依赖；启动服务 npm: 安装包/build项目
             cd /projects/summer
-            wget https://github.com/graywenn/summer/archive/${{github.ref_name}}.tar.gz -O ${{github.ref_name}}.tar.gz
+            wget https://github.com/graywenn/summer/releases/download/${{github.ref_name}}/${{github.ref_name}}.tar.gz -O ${{github.ref_name}}.tar.gz
             tar zxvf ${{github.ref_name}}.tar.gz --strip-components 1
