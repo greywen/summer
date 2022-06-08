@@ -2,13 +2,39 @@ name: Production
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: |
+          yarn install
+          yarn run build
+          tar -czvf ${{ github.ref_name }}.tar.gz ./dist ./node_modules
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+
+      - name: Upload Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{ github.ref_name }}.tar.gz
+          asset_name: ${{ github.ref_name }}.tar.gz
+          asset_content_type: application/x-tar
+
       # 部署到服务器
-      - name: Deploy
+      - name: Deploy Server
         uses: appleboy/ssh-action@master # 使用ssh链接服务器
         with:
           host: ${{ secrets.SSH_HOST }} #配置的服务器地址
@@ -17,8 +43,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script:
             | # 执行命令（运行到服务器）cd：要确保服务器有这个目录； wget：下载上一步的build文件到服务器； tar：解压； 安装依赖；启动服务 npm: 安装包/build项目
-            cd /root/summer
+            cd /project/summer
             wget https://github.com/graywenn/summer/archive/${{github.ref}}.tar.gz -O ${{github.ref_name}}.tar.gz
-            tar zxvf ${{github.ref_name}}.tar.gz --strip-components 1
-            yarn i
-            yarn run build
+            tar zxvf ${{github.ref_name}}.tar.gz
