@@ -8,7 +8,11 @@ import {
   IDingTalkTokenResponseResult,
   IDingTalkUserListIdResult,
   IDingTalkUserResult,
+  IGetReportSimplelistParams,
+  IGetReportSimplelistResult,
   IReportSimpleListResult,
+  IReportTemplate,
+  IReportTemplateResult,
   IUserAttendanceResult,
 } from '@interfaces/dingTalk';
 import * as moment from 'moment';
@@ -210,19 +214,52 @@ export default class DingTalkApi {
 
   /**
    * 创建日志
-   * @param bodyData
    */
   async createUserReport(
     bodyData: ICreateReport,
   ): Promise<IDingTalkDefaultBaseResult> {
     const token = await this.getDingTalkAccessToken();
     const res = await fetch(
-      `${this.apiUrl}/report/create?access_token=${token}`,
+      `${this.apiUrl}/topapi/report/create?access_token=${token}`,
       {
         method: 'POST',
         body: JSON.stringify({ create_report_param: bodyData }),
       },
     ).then((res): Promise<IDingTalkDefaultBaseResult> => res.json());
+    return res;
+  }
+
+  /**
+   * 获取模板详情
+   */
+  async getReportTemplateByName(
+    bodyData: IReportTemplate,
+  ): Promise<IReportTemplateResult> {
+    const token = await this.getDingTalkAccessToken();
+    const res = await fetch(
+      `${this.apiUrl}/topapi/report/template/getbyname?access_token=${token}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(bodyData),
+      },
+    ).then((res): Promise<IReportTemplateResult> => res.json());
+    return res;
+  }
+
+  /**
+   * 获取用户发送日志的概要信息
+   */
+  async getReportSimplelist(
+    bodyData: IGetReportSimplelistParams,
+  ): Promise<IGetReportSimplelistResult> {
+    const token = await this.getDingTalkAccessToken();
+    const res = await fetch(
+      `${this.apiUrl}/topapi/report/simplelist?access_token=${token}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(bodyData),
+      },
+    ).then((res): Promise<IGetReportSimplelistResult> => res.json());
     return res;
   }
 }

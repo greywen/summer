@@ -2,6 +2,7 @@ import DingTalkApi from '@apis/dingTalkApi';
 import {
   ICreateReport,
   IReportSimpleDatalist,
+  IReportTemplate,
   IUser,
 } from '@interfaces/dingTalk';
 import { Injectable } from '@nestjs/common';
@@ -128,8 +129,15 @@ export class DingTalkService {
     return reports;
   }
 
-  async createReport() {
-    const body: ICreateReport = {} as any;
-    await this.dingTalkApi.createUserReport(body);
+  async createReport(body: ICreateReport) {
+    return await this.dingTalkApi.createUserReport(body);
+  }
+
+  async getReportTemplateByName(body: IReportTemplate) {
+    return await this.dingTalkApi.getReportTemplateByName(body);
+  }
+
+  async getReportSimplelist(body: any) {
+    return await this.dingTalkApi.getReportSimplelist(body);
   }
 }

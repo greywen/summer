@@ -5,6 +5,8 @@ interface IConfig {
   };
   dingTalk: {
     bossId: string;
+    conversationId: string;
+    templateId: string;
     apikey: string;
     apisecret: string;
     apiUrl: string;
@@ -55,6 +57,8 @@ export default <IConfig>{
   },
   dingTalk: {
     bossId: config.get('dingTalk.bossId'),
+    conversationId: config.get('dingTalk.conversationId'),
+    templateId: config.get('dingTalk.templateId'),
     apikey: config.get('dingTalk.apikey'),
     apisecret: config.get('dingTalk.apisecret'),
     apiUrl: config.get('dingTalk.apiUrl'),
