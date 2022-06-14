@@ -1,4 +1,4 @@
-import Core from '@alicloud/pop-core';
+import * as Core from '@alicloud/pop-core';
 import config from '@config/config';
 
 const SMSApi = {
