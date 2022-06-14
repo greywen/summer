@@ -225,7 +225,7 @@ export class DingTalkController {
       cursor: 0,
       size: 1,
     });
-    if (result.result.data_list.length > 0) {
+    if (result?.result?.data_list.length > 0) {
       return true;
     }
     return false;
