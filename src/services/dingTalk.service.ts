@@ -80,7 +80,7 @@ export class DingTalkService {
   }
 
   async getAttendanceList(
-    userIdList: number[],
+    userIdList: string[],
     startTime: string,
     endTime: string,
   ) {

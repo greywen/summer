@@ -112,7 +112,7 @@ export default class DingTalkApi {
    * @param endTime
    */
   async getAttendanceList(
-    userIdList: number[],
+    userIdList: string[],
     startTime: string,
     endTime: string,
   ) {

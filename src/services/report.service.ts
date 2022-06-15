@@ -10,7 +10,7 @@ export class ReportService {
 
   async getNotCommitReportUsers(startTime: string, endTime: string) {
     const users = await FileData.readUsers();
-    const userIds = users.map((x) => parseInt(x.id));
+    const userIds = users.map((x) => x.id);
 
     // 当天应交日报的员工id
     const usersAttendanceList = await this.dingTalkService.getAttendanceList(
