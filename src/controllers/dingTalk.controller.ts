@@ -6,6 +6,7 @@ import {
   IUserCreateDto,
   IUserUpdateDto,
 } from '@dtos/dingTlak';
+import { ICreateReport } from '@interfaces/dingTalk';
 import { NestRes } from '@interfaces/nestbase';
 import {
   Body,
@@ -185,17 +186,19 @@ export class DingTalkController {
         };
       }
     }
-    const params = {
+    const params: ICreateReport = {
       contents: contents,
       template_id: templeDetail.result.id,
-      to_userids: templeDetail.result.default_receivers.map((item) => {
-        return item.userid;
-      }),
       to_chat: false,
       to_cids: [config.dingTalk.conversationId],
       dd_from: 'fenglin',
       userid: req.user.dingTalkUserId,
     };
+    templeDetail.result?.default_receivers &&
+      (params.to_userids = templeDetail.result.default_receivers.map((item) => {
+        return item.userid;
+      }));
+
     const result = await this.dingTalkService.createReport(params);
     if (result.errcode === 0) {
       return true;
