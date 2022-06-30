@@ -223,7 +223,7 @@ export class DingTalkController {
       userid: dingTalkUserId,
     });
     result.result.value = userTimeSheet?.value;
-    return result;
+    return result.result;
   }
 
   @Get('/getReportFinished')
