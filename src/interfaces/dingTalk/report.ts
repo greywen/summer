@@ -48,7 +48,7 @@ export interface IReportTemplate {
   userid: string;
 }
 
-interface IGetReportTemplateResult {
+export interface IGetReportTemplateResult {
   default_received_convs: Defaultreceivedconv[];
   default_receivers: Defaultreceiver[];
   fields: Field[];
@@ -56,6 +56,7 @@ interface IGetReportTemplateResult {
   name: string;
   user_name: string;
   userid: string;
+  value?: string;
 }
 
 interface Field {

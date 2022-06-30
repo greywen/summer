@@ -8,6 +8,8 @@ import {
 } from '@dtos/dingTlak';
 import { ICreateReport } from '@interfaces/dingTalk';
 import { NestRes } from '@interfaces/nestbase';
+import { ITimeSheetData } from '@interfaces/timesheet';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import {
   Body,
   Controller,
@@ -25,7 +27,10 @@ import * as moment from 'moment';
 @UseGuards(AuthGuard('jwt'))
 @Controller('dingtalk')
 export class DingTalkController {
-  constructor(private readonly dingTalkService: DingTalkService) {}
+  constructor(
+    private readonly dingTalkService: DingTalkService,
+    @InjectRedis() private readonly redis: Redis,
+  ) {}
 
   @Get('/departments')
   async getDepartments() {
@@ -206,15 +211,18 @@ export class DingTalkController {
     return false;
   }
 
-  @Post('/getReportTemplateByName')
-  async getReportTemplateByName(
-    @Body() Body: IGetReportTemplateByNameDto,
-    @Request() req: NestRes,
-  ) {
+  @Get('/getReportTemplateByName')
+  async getReportTemplateByName(@Request() req: NestRes) {
+    const { dingTalkUserId } = req.user;
+    const _timesheet = await this.redis.get('timesheets');
+    const datas = <ITimeSheetData[]>JSON.parse(_timesheet || '[]');
+    const userTimeSheet = datas.find((x) => x.userid === dingTalkUserId);
+
     const result = await this.dingTalkService.getReportTemplateByName({
-      template_name: Body.name,
-      userid: req.user.dingTalkUserId,
+      template_name: 'TIMESHEET',
+      userid: dingTalkUserId,
     });
+    result.result.value = userTimeSheet?.value;
     return result;
   }
 
