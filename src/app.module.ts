@@ -15,7 +15,7 @@ import {
 } from './controllers';
 import { jwtModuleOptions, redisModuleOptions } from './modules';
 import { TimeSheetSocket } from './sockets';
-import { DingTalkSchedule, TimeSheetSchedule } from './schedules';
+import { TimeSheetSchedule } from './schedules';
 import {
   AttendanceService,
   AuthService,
@@ -25,13 +25,24 @@ import {
   InformService,
 } from './services';
 import { JwtStrategy, WsGuard } from './strategys';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
+import config from '@config/config';
+import { UserTimesheet } from './entities/timesheet.enetity';
 @Module({
   imports: [
     PassportModule,
     JwtModule.register(jwtModuleOptions),
     RedisModule.forRoot(redisModuleOptions),
     ScheduleModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      ...config.postgresql,
+      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+      migrationsTableName: 'migration',
+      migrations: ['src/migration/*.ts'],
+    }),
+    TypeOrmModule.forFeature([UserTimesheet]),
   ],
   controllers: [
     AppController,
@@ -53,7 +64,6 @@ import { JwtStrategy, WsGuard } from './strategys';
     UserService,
     InformService,
     TimeSheetSocket,
-    DingTalkSchedule,
     TimeSheetSchedule,
   ],
   exports: [AuthService],

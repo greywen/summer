@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import FileData from '@core/files.data';
-import { ITimeSheetData } from '@interfaces/timesheet';
+import { ITimeSheet } from '@interfaces/timesheet';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { AuthGuard } from '@nestjs/passport';
 import * as moment from 'moment';
@@ -16,25 +16,28 @@ export class TimeSheetController {
   ) {
     const templateData = await FileData.readTimeSheetTemplate();
     const users = await FileData.readUsers();
-    let datas = [];
+    let datas = <ITimeSheet[]>[];
 
     if (date === moment().format('YYYY-MM-DD')) {
       const _timesheet = await this.redis.get('timesheets');
-      datas = <ITimeSheetData[]>JSON.parse(_timesheet || '[]');
+      datas = <ITimeSheet[]>JSON.parse(_timesheet || '[]');
     } else {
       try {
         const result = await FileData.readTimeSheet(date);
-        datas = <ITimeSheetData[]>JSON.parse(result).users;
+        datas = <ITimeSheet[]>JSON.parse(result).users;
       } catch (err) {}
     }
     const timeSheetData = users
       .filter((x) => x.dept_name === dept_name)
       .map((x) => {
+        const _data = datas.find((d) => d.userid === x.id);
         return {
           userid: x.id,
           name: x.english_name,
           groupid: x.groupid,
-          value: datas.find((d) => d.userid === x.id)?.value || null,
+          value: _data?.value || '',
+          createTime: _data?.createTime || '',
+          updateTime: _data?.updateTime || '',
         };
       });
 
