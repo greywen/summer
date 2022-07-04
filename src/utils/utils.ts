@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { AttendanceState } from '../constants';
+import { AttendanceState } from '../constants/dingTalk';
 
 /**
  * 简单数组去重 eg: [1,2,2]=>[1,2] / ["1","2","2"]=>["1","2"]
@@ -35,4 +35,8 @@ export function formatDate(
     date = moment(date);
   }
   return date.format(format);
+}
+
+export function now(format = 'YYYY-MM-DD HH:mm:ss') {
+  return moment().format(format);
 }

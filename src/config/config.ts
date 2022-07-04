@@ -1,7 +1,9 @@
+import { ServerEnvironment } from '@constants/server';
 import * as config from 'config';
 interface IConfig {
   server: {
     port: number;
+    environment: ServerEnvironment;
   };
   dingTalk: {
     bossId: string;
@@ -49,11 +51,22 @@ interface IConfig {
     secret: string;
     expiresIn: string;
   };
+  postgresql: {
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+    database: string;
+    autoLoadEntities: boolean;
+    synchronize: boolean;
+    logging: boolean;
+  };
 }
 
 export default <IConfig>{
   server: {
     port: config.get('server.port'),
+    environment: config.get('server.environment'),
   },
   dingTalk: {
     bossId: config.get('dingTalk.bossId'),
@@ -100,4 +113,5 @@ export default <IConfig>{
     secret: config.get('jwt.secret'),
     expiresIn: config.get('jwt.expiresIn'),
   },
+  postgresql: config.get('postgresql'),
 };

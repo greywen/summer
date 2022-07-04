@@ -1,7 +1,7 @@
 import { AttendanceState } from '@constants/dingTalk';
 import FileData from '@core/files.data';
 import { IAttendances, IUserAttendances } from '@interfaces/dingTalk';
-import { ITimeSheetData } from '@interfaces/timesheet';
+import { ITimeSheet } from '@interfaces/timesheet';
 import { Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
@@ -12,7 +12,7 @@ export class UserService {
 
   async getTodayTimeSheet(username: string) {
     const data = await this.redis.get('timesheets');
-    const timesheet = <ITimeSheetData[]>JSON.parse(data || '[]');
+    const timesheet = <ITimeSheet[]>JSON.parse(data || '[]');
     const users = await FileData.readUsers();
     const user = users.find((x) => x.name === username);
     const todayTimeSheet = timesheet.find(

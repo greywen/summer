@@ -1,13 +1,21 @@
 import config from '@config/config';
 import FileData from '@core/files.data';
-import { ITimeSheetData } from '@interfaces/timesheet';
+import { ITimeSheet } from '@interfaces/timesheet';
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import * as moment from 'moment';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserTimesheet } from 'src/entities/timesheet.enetity';
+import { Repository } from 'typeorm';
+import { now } from '@utils/utils';
 @Injectable()
 export class TimeSheetSchedule {
-  constructor(@InjectRedis() private readonly redis: Redis) {}
+  constructor(
+    @InjectRedis() private readonly redis: Redis,
+    @InjectRepository(UserTimesheet)
+    private readonly timesheetRepository: Repository<UserTimesheet>,
+  ) {}
 
   @Cron(config.job.saveTimeSheetRule, { name: 'SaveTimeSheetSchedule' })
   async run() {
@@ -19,12 +27,12 @@ export class TimeSheetSchedule {
     }
     console.log('Saving TimeSheet...');
     const _timesheet = await this.redis.get('timesheets');
-    const timesheets = <ITimeSheetData[]>JSON.parse(_timesheet || '[]');
-    const result = await FileData.writeTimeSheet(
-      currentDate.format('YYYY-MM-DD'),
-      JSON.stringify({ users: timesheets }),
-    );
-    if (result) {
+    const timesheets = <ITimeSheet[]>JSON.parse(_timesheet || '[]');
+    const result = await this.timesheetRepository.save({
+      timesheet: timesheets,
+      createTime: now(),
+    });
+    if (result.id) {
       await this.redis.set('timesheets', '[]');
       console.log('Save TimeSheet successful!');
     } else {

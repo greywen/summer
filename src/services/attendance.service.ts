@@ -8,7 +8,7 @@ import {
   AttendanceCheckType,
   AttendanceState,
   TimeResultType,
-} from '../constants';
+} from '../constants/dingTalk';
 
 interface ITimes {
   start: string;
@@ -153,6 +153,9 @@ export class AttendanceService {
    */
   private async getUserReportLog() {
     if (await this.whetherLeaveOneDay()) {
+      return;
+    }
+    if (this.user.groupid >= 1 && this.user.groupid <= 4) {
       return;
     }
     const { date } = this.findNextNotHolodayDate(

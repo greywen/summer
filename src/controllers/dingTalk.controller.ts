@@ -8,7 +8,7 @@ import {
 } from '@dtos/dingTlak';
 import { ICreateReport } from '@interfaces/dingTalk';
 import { NestRes } from '@interfaces/nestbase';
-import { ITimeSheetData } from '@interfaces/timesheet';
+import { ITimeSheet } from '@interfaces/timesheet';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import {
   Body,
@@ -215,7 +215,7 @@ export class DingTalkController {
   async getReportTemplateByName(@Request() req: NestRes) {
     const { dingTalkUserId } = req.user;
     const _timesheet = await this.redis.get('timesheets');
-    const datas = <ITimeSheetData[]>JSON.parse(_timesheet || '[]');
+    const datas = <ITimeSheet[]>JSON.parse(_timesheet || '[]');
     const userTimeSheet = datas.find((x) => x.userid === dingTalkUserId);
 
     const result = await this.dingTalkService.getReportTemplateByName({

@@ -4,9 +4,11 @@ export interface ISheetTemplate {
   test: string;
 }
 
-export interface ITimeSheetData {
+export interface ITimeSheet {
   userid: string;
   name: string;
   value?: string;
   groupid: number;
+  updateTime: string;
+  createTime: string;
 }

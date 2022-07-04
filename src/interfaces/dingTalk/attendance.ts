@@ -2,7 +2,7 @@ import {
   AttendanceCheckType,
   AttendanceState,
   TimeResultType,
-} from '../../constants';
+} from '../../constants/dingTalk';
 import { IDingTalkBaseResult } from './base';
 
 export interface IUserAttendances {
