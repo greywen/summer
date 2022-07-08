@@ -18,16 +18,36 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@core/*": ["./src/core/*"],
-      "@controller/*": ["./src/controller/*"],
-      "@config/*": ["./src/config/*"],
-      "@services/*": ["./src/services/*"],
-      "@apis/*": ["./src/apis/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@interfaces/*": ["./src/interfaces/*"],
-      "@constants/*": ["./src/constants/*"],
-      "@dtos/*": ["./src/dtos/*"],
-      "@strategys/*": ["./src/strategys/*"]
+      "@core/*": [
+        "./src/core/*"
+      ],
+      "@controller/*": [
+        "./src/controller/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
+      ],
+      "@services/*": [
+        "./src/services/*"
+      ],
+      "@apis/*": [
+        "./src/apis/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@interfaces/*": [
+        "./src/interfaces/*"
+      ],
+      "@constants/*": [
+        "./src/constants/*"
+      ],
+      "@dtos/*": [
+        "./src/dtos/*"
+      ],
+      "@strategys/*": [
+        "./src/strategys/*"
+      ]
     }
   }
 }

@@ -19,7 +19,7 @@ export class TimeSheetSocket {
     data.updateTime = now();
     if (_data) {
       // 使用token中的userid=>每用户都只能编辑自己的timesheet不能修改其他用户的
-      // _data.userid = client.data.dingTalkUserId;
+      // _data.userid = client.data.dingUserId;
       _data.userid = data.userid;
       _data.value = data.value;
       _data.createTime = data.createTime || now();

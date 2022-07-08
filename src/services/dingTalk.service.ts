@@ -56,6 +56,14 @@ export class DingTalkService {
         dept_name: '',
         phone: '',
         hired_date: user['hired_date'],
+        avatar: user['avatar'],
+        mobile: user['mobile'],
+        email: user['email'],
+        work_place: user['work_place'],
+        remark: user['remark'],
+        boss: user['boss'],
+        role_list: user['role_list'],
+        title: user['title'],
       });
     }
     return users;

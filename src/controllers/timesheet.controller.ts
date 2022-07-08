@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import FileData from '@core/files.data';
 import { ITimeSheet } from '@interfaces/timesheet';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
-import { AuthGuard } from '@nestjs/passport';
 import * as moment from 'moment';
+import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('timesheet')

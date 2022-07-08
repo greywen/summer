@@ -2,7 +2,6 @@ import config from '@config/config';
 import FileData from '@core/files.data';
 import {
   ICreateReportDto,
-  IGetReportTemplateByNameDto,
   IUserCreateDto,
   IUserUpdateDto,
 } from '@dtos/dingTlak';
@@ -144,7 +143,7 @@ export class DingTalkController {
   async createReport(@Body() Body: ICreateReportDto, @Request() req: NestRes) {
     const templeDetail = await this.dingTalkService.getReportTemplateByName({
       template_name: 'TIMESHEET',
-      userid: req.user.dingTalkUserId,
+      userid: req.user.dingUserId,
     });
     const contents = [];
     contents[0] = {
@@ -197,7 +196,7 @@ export class DingTalkController {
       to_chat: false,
       to_cids: [config.dingTalk.conversationId],
       dd_from: 'fenglin',
-      userid: req.user.dingTalkUserId,
+      userid: req.user.dingUserId,
     };
     templeDetail.result?.default_receivers &&
       (params.to_userids = templeDetail.result.default_receivers.map((item) => {
@@ -213,14 +212,14 @@ export class DingTalkController {
 
   @Get('/getReportTemplateByName')
   async getReportTemplateByName(@Request() req: NestRes) {
-    const { dingTalkUserId } = req.user;
+    const { dingUserId } = req.user;
     const _timesheet = await this.redis.get('timesheets');
     const datas = <ITimeSheet[]>JSON.parse(_timesheet || '[]');
-    const userTimeSheet = datas.find((x) => x.userid === dingTalkUserId);
+    const userTimeSheet = datas.find((x) => x.userid === dingUserId);
 
     const result = await this.dingTalkService.getReportTemplateByName({
       template_name: 'TIMESHEET',
-      userid: dingTalkUserId,
+      userid: dingUserId,
     });
     result.result.value = userTimeSheet?.value;
     return result.result;
@@ -232,7 +231,7 @@ export class DingTalkController {
       start_time: moment().startOf('day').format('x'),
       end_time: moment().endOf('day').format('x'),
       template_name: 'TIMESHEET',
-      userid: req.user.dingTalkUserId,
+      userid: req.user.dingUserId,
       cursor: 0,
       size: 1,
     });
