@@ -14,22 +14,30 @@ async function bootstrap() {
     client_secret: config.keycloak.clientSecret,
     login_redirect_uri: config.keycloak.logoutRedirectUri,
   });
-  // const kcAdminClient = new KcAdminClient();
-  // kcAdminClient.setConfig({
-  //   baseUrl: 'https://identity.starworks.cc/',
-  //   realmName: 'MFF',
-  // });
-  // await kcAdminClient.auth({
-  //   username: '文旺',
-  //   password: 'Ww111111',
-  //   grantType: 'password',
-  //   clientId: config.keycloak.clientId,
-  //   // grantType: 'client_credentials',
-  //   // clientId: config.keycloak.clientId,
-  //   // clientSecret: config.keycloak.clientSecret,
-  // });
-  // const users = await kcAdminClient.users.find();
-  // console.log(users);
+  const kcAdminClient = new KcAdminClient();
+  kcAdminClient.setConfig({
+    baseUrl: config.keycloak.clientBaseUrl,
+    realmName: config.keycloak.realm,
+  });
+  await kcAdminClient.auth({
+    username: config.keycloak.username,
+    password: config.keycloak.password,
+    grantType: config.keycloak.clientGrantType,
+    clientId: config.keycloak.clientId,
+    clientSecret: config.keycloak.clientSecret,
+  });
+  const user = await kcAdminClient.users.findOne({
+    id: '63d48ab2-c599-45c2-adc2-61f464255ce0',
+  });
+  // user.attributes = [...users.attributes,]
+  // kcAdminClient.users.update(
+  //   { id: '63d48ab2-c599-45c2-adc2-61f464255ce0' },
+  //   user,
+  // );
+  const groups = await kcAdminClient.groups.find();
+  console.log(user);
+  console.log(groups);
+  console.log(groups[0].subGroups);
   await app.listen(config.server.port);
 }
 bootstrap();

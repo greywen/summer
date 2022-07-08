@@ -1,4 +1,5 @@
 import { ServerEnvironment } from '@constants/server';
+import { GrantTypes } from '@keycloak/keycloak-admin-client/lib/utils/auth';
 import * as config from 'config';
 interface IConfig {
   server: {
@@ -46,6 +47,10 @@ interface IConfig {
     scope: string;
     grantType: string;
     logoutRedirectUri: string;
+    clientBaseUrl: string;
+    username: string;
+    password: string;
+    clientGrantType: GrantTypes;
   };
   jwt: {
     secret: string;
@@ -99,16 +104,7 @@ export default <IConfig>{
     port: config.get('redis.port'),
     password: config.get('redis.password'),
   },
-  keycloak: {
-    realm: config.get('keycloak.realm'),
-    issuer: config.get('keycloak.issuer'),
-    clientId: config.get('keycloak.clientId'),
-    redirectUri: config.get('keycloak.redirectUri'),
-    scope: config.get('keycloak.scope'),
-    clientSecret: config.get('keycloak.clientSecret'),
-    grantType: config.get('keycloak.grantType'),
-    logoutRedirectUri: config.get('keycloak.logoutRedirectUri'),
-  },
+  keycloak: config.get('keycloak'),
   jwt: {
     secret: config.get('jwt.secret'),
     expiresIn: config.get('jwt.expiresIn'),

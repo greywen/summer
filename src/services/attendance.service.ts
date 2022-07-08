@@ -237,6 +237,7 @@ export class AttendanceService {
       this.attendances = [];
       return;
     }
+
     let onDutyTime = 0;
     let offDutyTime = 0;
     for (const data of attendance.attendance_result_list) {
@@ -279,10 +280,13 @@ export class AttendanceService {
       }
     }
     this.attendances.push({
-      onDutyTime: onDutyTime,
-      offDutyTime: offDutyTime,
       state: _attendance.state,
       value: _attendance.state === AttendanceState.O ? null : _attendance.value,
+    });
+
+    this.attendances.push({
+      state: AttendanceState.A,
+      value: `${onDutyTime} - ${offDutyTime}`,
     });
   }
 }

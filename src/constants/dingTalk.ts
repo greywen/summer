@@ -16,6 +16,7 @@ export enum LeaveDurationUnitType {
  * 未提交日志 X 6
  * 加班 J 7
  * 迟到 L 8
+ * 打卡时间 A 9
  */
 export enum AttendanceState {
   'O' = 1,
@@ -26,6 +27,7 @@ export enum AttendanceState {
   'X' = 6,
   'J' = 7,
   'L' = 8,
+  'A' = 9,
 }
 
 export enum AttendanceCheckType {

@@ -13,8 +13,6 @@ export interface IUserAttendances {
 }
 
 export interface IAttendances {
-  onDutyTime?: number;
-  offDutyTime?: number;
   state: AttendanceState;
   value?: any;
 }
