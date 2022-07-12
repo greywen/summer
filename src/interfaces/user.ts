@@ -8,7 +8,7 @@ export interface IUserResultInfo {
   phone: string;
   avatar: string;
   title: string;
-  hiredDate: number;
+  hiredDate: string;
 }
 
 export class IUserInfo {

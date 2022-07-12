@@ -28,7 +28,13 @@ import { JwtStrategy, WsGuard } from './strategys';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import config from '@config/config';
-import { UserTimesheet } from './entities/timesheet.enetity';
+import {
+  DataPermission,
+  DataDepartment,
+  UserTimesheet,
+  UserDepartment,
+  DepartmentPermission,
+} from '@entities/index';
 
 @Module({
   imports: [
@@ -43,7 +49,13 @@ import { UserTimesheet } from './entities/timesheet.enetity';
       migrationsTableName: 'migration',
       migrations: ['src/migration/*.ts'],
     }),
-    TypeOrmModule.forFeature([UserTimesheet]),
+    TypeOrmModule.forFeature([
+      DataPermission,
+      DataDepartment,
+      UserTimesheet,
+      UserDepartment,
+      DepartmentPermission,
+    ]),
   ],
   controllers: [
     AppController,

@@ -286,7 +286,9 @@ export class AttendanceService {
 
     this.attendances.push({
       state: AttendanceState.A,
-      value: `${onDutyTime} - ${offDutyTime}`,
+      value: `${onDutyTime && moment(onDutyTime).format('HH:mm:ss')} - ${
+        offDutyTime && moment(offDutyTime).format('HH:mm:ss')
+      }`,
     });
   }
 }

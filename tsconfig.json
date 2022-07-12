@@ -47,6 +47,9 @@
       ],
       "@strategys/*": [
         "./src/strategys/*"
+      ],
+      "@entities/*": [
+        "./src/entities/*"
       ]
     }
   }

@@ -1,12 +1,19 @@
+import { UserDepartment } from '@entities/user.department.entity';
 import { IKeyCloakUserInfo, IUserResultInfo } from '@interfaces/user';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import NodeKeycloak from 'node-keycloak';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectRepository(UserDepartment)
+    private readonly userDepartmentRepository: Repository<UserDepartment>,
+  ) {}
 
   async signin(code: string, session_state: string): Promise<IUserResultInfo> {
     try {
@@ -18,11 +25,13 @@ export class AuthService {
       const keyCloakUserInfo = <IKeyCloakUserInfo>(
         jwt.decode(result.access_token)
       );
-      console.log(userinfo, result, keyCloakUserInfo);
+      const userdepartement = await this.userDepartmentRepository.findOneBy({
+        userid: userinfo.sub,
+      });
       return {
         expires_at: result.expires_at,
         access_token: this.jwtService.sign({
-          userId: keyCloakUserInfo.sid,
+          userId: keyCloakUserInfo.sub,
           dingUserId: keyCloakUserInfo.dingUserId,
           username: keyCloakUserInfo.preferred_username,
           email: keyCloakUserInfo.email,
@@ -38,7 +47,7 @@ export class AuthService {
         phone: userinfo.phoneNumber as string,
         avatar: userinfo.avatar as string,
         title: userinfo.title as string,
-        hiredDate: userinfo.hiredDate as number,
+        hiredDate: userinfo.hiredDate as string,
       };
     } catch (e) {
       console.log('Login error: ', e);
