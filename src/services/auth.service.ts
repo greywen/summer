@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import NodeKeycloak from 'node-keycloak';
 import { Repository } from 'typeorm';
+import { UserDepartmentService } from './department.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(UserDepartment)
     private readonly userDepartmentRepository: Repository<UserDepartment>,
+    private readonly userDepartmentService: UserDepartmentService,
   ) {}
 
   async signin(code: string, session_state: string): Promise<IUserResultInfo> {
@@ -25,19 +27,17 @@ export class AuthService {
       const keyCloakUserInfo = <IKeyCloakUserInfo>(
         jwt.decode(result.access_token)
       );
-      const userdepartement = await this.userDepartmentRepository.findOneBy({
+      const userDepartement = await this.userDepartmentRepository.findOneBy({
         userid: userinfo.sub,
       });
+      console.log('userDepartement', userDepartement);
       return {
         expires_at: result.expires_at,
         access_token: this.jwtService.sign({
           userId: keyCloakUserInfo.sub,
           dingUserId: keyCloakUserInfo.dingUserId,
           username: keyCloakUserInfo.preferred_username,
-          email: keyCloakUserInfo.email,
-          resourceAccess: keyCloakUserInfo.resource_access,
-          realmAccess: keyCloakUserInfo.realm_access,
-          phone: userinfo.phoneNumber as string,
+          departmentIds: userDepartement.departmentids,
           idToken: result.id_token,
         }),
         refresh_expires_in: result.refresh_expires_in as string,

@@ -15,10 +15,7 @@ export class IUserInfo {
   userId: string;
   dingUserId: string;
   username: string;
-  email: string;
-  resourceAccess: string;
-  realmAccess: string;
-  phone: string;
+  departmentIds: number[];
   idToken: string;
 }
 

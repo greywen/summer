@@ -32,6 +32,7 @@ interface IConfig {
     attendanceRule: string;
     reportRule: string;
     saveTimeSheetRule: string;
+    keyCloakAuthRule: string;
   };
   redis: {
     host: string;
@@ -94,11 +95,7 @@ export default <IConfig>{
     code: config.get('smsTemplate.code'),
     signName: config.get('smsTemplate.signName'),
   },
-  job: {
-    attendanceRule: config.get('job.attendanceRule'),
-    reportRule: config.get('job.reportRule'),
-    saveTimeSheetRule: config.get('job.saveTimeSheetRule'),
-  },
+  job: config.get('job'),
   redis: {
     host: config.get('redis.host'),
     port: config.get('redis.port'),

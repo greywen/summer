@@ -7,6 +7,12 @@ import { AttendanceState } from '../constants/dingTalk';
 export function unique<T>(arr) {
   return <T[]>Array.from(new Set(arr));
 }
+/**
+ * 简单数据取交集
+ */
+export function intersect(arr1: any[], arr2: any[]) {
+  return arr1.filter(Set.prototype.has, new Set(arr2));
+}
 
 export function vacationToEnum(name) {
   switch (name) {

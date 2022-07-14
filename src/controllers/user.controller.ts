@@ -1,14 +1,26 @@
 import { NestRes } from '@interfaces/nestbase';
-import { Controller, Get, UseGuards, Request, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  UseGuards,
+  Request,
+  Param,
+  Put,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '@services/user.service';
 import FileData from '@core/files.data';
 import * as moment from 'moment';
+import { UserDepartmentService } from '@services/department.service';
+import { IUserMemberDto } from '@dtos/user';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly userDepartmentService: UserDepartmentService,
+  ) {}
   @Get('today')
   async getTodayInfo(@Request() req: NestRes) {
     return {
@@ -17,6 +29,20 @@ export class UserController {
         req.user.username,
       ),
     };
+  }
+
+  @Get('members')
+  async getUserMembers(@Request() req: NestRes): Promise<IUserMemberDto[]> {
+    const departmentMembers =
+      await this.userDepartmentService.getDepartmentMembers(
+        req.user.departmentIds,
+      );
+    return departmentMembers.map((x) => {
+      return <IUserMemberDto>{
+        username: x.username,
+        avatar: x.attributes.avatar && x.attributes.avatar[0],
+      };
+    });
   }
 
   @Get('attendance/:month')
@@ -37,4 +63,11 @@ export class UserController {
     });
     return attendances;
   }
+
+  // @Put('user')
+  // async updateUser() {}
+  // @Get('users')
+  // async getUsers() {
+
+  // }
 }
