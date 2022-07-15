@@ -16,6 +16,14 @@ export interface IUser {
   dept_id_list?: string[];
   phone?: string;
   hired_date: number;
+  avatar?: string;
+  mobile?: string;
+  email?: string;
+  work_place?: string;
+  remark?: string;
+  boss?: boolean;
+  role_list?: IDingTalkUserRole[];
+  title?: string;
 }
 
 export type IDingTalkUserResult = IDingTalkBaseResult<IDingTalkUser>;
@@ -27,6 +35,14 @@ export interface IDingTalkUser {
   dept_id_list: string[];
   // 入职时间戳
   hired_date: number;
+  avatar: string;
+  mobile: string;
+  email: string;
+  work_place: string;
+  remark: string;
+  boss: boolean;
+  role_list: IDingTalkUserRole[];
+  title: string;
 }
 
 export type IDingTalkUserListIdResult =
@@ -45,4 +61,10 @@ export interface IUserToken {
   preferred_username: string;
   name: string;
   expires_at: number;
+}
+
+export interface IDingTalkUserRole {
+  id: number;
+  name: string;
+  group_name: string;
 }

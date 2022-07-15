@@ -7,23 +7,23 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import KcClient from '@utils/kcClient';
 import { AuthService } from '@services/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { NestRes } from '@interfaces/nestbase';
+import NodeKeycloak from 'node-keycloak';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Get('/url')
   async getAuthUrl() {
-    return await KcClient.client.authorizationUrl();
+    return await NodeKeycloak.authorizationUrl();
   }
 
   @Post('/authentication')
   async authentication(@Body() authDto: IAuthDto) {
-    const { code, state, session_state } = authDto;
-    return await this.authService.signin(code, state, session_state);
+    const { code, session_state } = authDto;
+    return await this.authService.signin(code, session_state);
   }
 
   @UseGuards(AuthGuard('jwt'))

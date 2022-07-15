@@ -1,4 +1,5 @@
 import { ServerEnvironment } from '@constants/server';
+import { GrantTypes } from '@keycloak/keycloak-admin-client/lib/utils/auth';
 import * as config from 'config';
 interface IConfig {
   server: {
@@ -31,6 +32,7 @@ interface IConfig {
     attendanceRule: string;
     reportRule: string;
     saveTimeSheetRule: string;
+    keyCloakAuthRule: string;
   };
   redis: {
     host: string;
@@ -46,6 +48,10 @@ interface IConfig {
     scope: string;
     grantType: string;
     logoutRedirectUri: string;
+    clientBaseUrl: string;
+    username: string;
+    password: string;
+    clientGrantType: GrantTypes;
   };
   jwt: {
     secret: string;
@@ -89,26 +95,13 @@ export default <IConfig>{
     code: config.get('smsTemplate.code'),
     signName: config.get('smsTemplate.signName'),
   },
-  job: {
-    attendanceRule: config.get('job.attendanceRule'),
-    reportRule: config.get('job.reportRule'),
-    saveTimeSheetRule: config.get('job.saveTimeSheetRule'),
-  },
+  job: config.get('job'),
   redis: {
     host: config.get('redis.host'),
     port: config.get('redis.port'),
     password: config.get('redis.password'),
   },
-  keycloak: {
-    realm: config.get('keycloak.realm'),
-    issuer: config.get('keycloak.issuer'),
-    clientId: config.get('keycloak.clientId'),
-    redirectUri: config.get('keycloak.redirectUri'),
-    scope: config.get('keycloak.scope'),
-    clientSecret: config.get('keycloak.clientSecret'),
-    grantType: config.get('keycloak.grantType'),
-    logoutRedirectUri: config.get('keycloak.logoutRedirectUri'),
-  },
+  keycloak: config.get('keycloak'),
   jwt: {
     secret: config.get('jwt.secret'),
     expiresIn: config.get('jwt.expiresIn'),

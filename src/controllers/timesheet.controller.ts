@@ -2,13 +2,17 @@ import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import FileData from '@core/files.data';
 import { ITimeSheet } from '@interfaces/timesheet';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
-import { AuthGuard } from '@nestjs/passport';
 import * as moment from 'moment';
+import { AuthGuard } from '@nestjs/passport';
+import { TimeSheetService } from '@services/timesheet.service';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('timesheet')
 export class TimeSheetController {
-  constructor(@InjectRedis() private readonly redis: Redis) {}
+  constructor(
+    @InjectRedis() private readonly redis: Redis,
+    private readonly timesheetService: TimeSheetService,
+  ) {}
   @Get('/get/:dept_name/:date')
   async getTimesheet(
     @Param('dept_name') dept_name: string,
@@ -23,8 +27,7 @@ export class TimeSheetController {
       datas = <ITimeSheet[]>JSON.parse(_timesheet || '[]');
     } else {
       try {
-        const result = await FileData.readTimeSheet(date);
-        datas = <ITimeSheet[]>JSON.parse(result).users;
+        datas = await this.timesheetService.getTimeSheetByDate(date);
       } catch (err) {}
     }
     const timeSheetData = users

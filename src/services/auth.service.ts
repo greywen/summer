@@ -1,47 +1,53 @@
-import config from '@config/config';
-import { IUserInfo, IUserTokenInfo } from '@interfaces/user';
+import { UserDepartment } from '@entities/user.department.entity';
+import { IKeyCloakUserInfo, IUserResultInfo } from '@interfaces/user';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import KcClient from '@utils/kcClient';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
-import { UserService } from './user.service';
+import NodeKeycloak from 'node-keycloak';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+    @InjectRepository(UserDepartment)
+    private readonly userDepartmentRepository: Repository<UserDepartment>,
   ) {}
 
-  async signin(code: string, state: string, session_state: string) {
+  async signin(code: string, session_state: string): Promise<IUserResultInfo> {
     try {
-      const result = await KcClient.client.callback(
-        config.keycloak.redirectUri,
-        { code: code, state: state, session_state: session_state },
+      const result = await NodeKeycloak.callback({
+        code: code,
+        session_state: session_state,
+      });
+      const userinfo = await NodeKeycloak.userinfo(result.access_token);
+      const keyCloakUserInfo = <IKeyCloakUserInfo>(
+        jwt.decode(result.access_token)
       );
-      const data = <IUserTokenInfo>jwt.decode(result.access_token);
-      const dingTalkUserInfo = await this.userService.getDingTalkUserInfoByName(
-        data.preferred_username,
-      );
+      const userDepartement = await this.userDepartmentRepository.findOneBy({
+        userid: userinfo.sub,
+      });
 
-      const userToken = <IUserInfo>{
-        name: data.name,
-        username: data.preferred_username,
-        roles: data.realm_access.roles,
-        accessToken: result.access_token,
-        hiredDate: dingTalkUserInfo?.hired_date,
-        idToken: result.id_token,
-      };
       return {
-        ...userToken,
-        refreshToken: result.refresh_token,
-        refreshExpires: result.refresh_expires_in,
-        expires: result.expires_at,
-        token: this.jwtService.sign({
-          ...userToken,
-          userId: data.sub,
-          dingTalkUserId: dingTalkUserInfo?.id,
+        expires_at: result.expires_at,
+        access_token: this.jwtService.sign({
+          userId: keyCloakUserInfo.sub,
+          dingUserId: keyCloakUserInfo.dingUserId,
+          username: keyCloakUserInfo.preferred_username,
+          departmentIds: userDepartement.departmentids,
+          idToken: result.id_token,
+          resources: keyCloakUserInfo.resourceIds,
         }),
+        refresh_expires_in: result.refresh_expires_in as string,
+        refresh_token: result.refresh_token,
+        username: userinfo.preferred_username,
+        email: userinfo.email,
+        phone: userinfo.phoneNumber as string,
+        avatar: userinfo.avatar as string,
+        title: userinfo.title as string,
+        hiredDate: userinfo.hiredDate as string,
+        resources: keyCloakUserInfo.resourceIds,
       };
     } catch (e) {
       console.log('Login error: ', e);
@@ -49,9 +55,6 @@ export class AuthService {
   }
 
   async signout(token: string) {
-    return await KcClient.client.endSessionUrl({
-      id_token_hint: token,
-      post_logout_redirect_uri: config.keycloak.logoutRedirectUri,
-    });
+    return await await NodeKeycloak.signout(token);
   }
 }

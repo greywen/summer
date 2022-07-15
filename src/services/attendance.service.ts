@@ -238,6 +238,8 @@ export class AttendanceService {
       return;
     }
 
+    let onDutyTime = 0;
+    let offDutyTime = 0;
     for (const data of attendance.attendance_result_list) {
       if (data.check_type === AttendanceCheckType.OnDuty) {
         subTime = moment(data.plan_check_time).diff(
@@ -247,6 +249,7 @@ export class AttendanceService {
         if (data.time_result === TimeResultType.Late && subTime > 60) {
           subTime += (await this.getLeaveTimeByMinutes()) + 90;
         }
+        onDutyTime = data.user_check_time;
       } else if (data.check_type === AttendanceCheckType.OffDuty) {
         // 获取用户上班信息
         const userOnDutyInfo = attendance.attendance_result_list.find(
@@ -269,6 +272,7 @@ export class AttendanceService {
         if (data.time_result === TimeResultType.Early) {
           subTime += (await this.getLeaveTimeByMinutes()) + 90;
         }
+        offDutyTime = data.user_check_time;
       }
       if (subTime < 0) {
         _attendance.state = AttendanceState.L;
@@ -278,6 +282,13 @@ export class AttendanceService {
     this.attendances.push({
       state: _attendance.state,
       value: _attendance.state === AttendanceState.O ? null : _attendance.value,
+    });
+
+    this.attendances.push({
+      state: AttendanceState.A,
+      value: `${onDutyTime && moment(onDutyTime).format('HH:mm:ss')} - ${
+        offDutyTime && moment(offDutyTime).format('HH:mm:ss')
+      }`,
     });
   }
 }

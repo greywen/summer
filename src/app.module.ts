@@ -3,6 +3,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { ScheduleModule } from '@nestjs/schedule';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {
@@ -13,9 +14,13 @@ import {
   UserController,
   InformController,
 } from './controllers';
-import { jwtModuleOptions, redisModuleOptions } from './modules';
+import {
+  jwtModuleOptions,
+  redisModuleOptions,
+  typeOrmOptions,
+} from './modules';
 import { TimeSheetSocket } from './sockets';
-import { TimeSheetSchedule } from './schedules';
+import { TimeSheetSchedule, KeyCloakSchedule } from './schedules';
 import {
   AttendanceService,
   AuthService,
@@ -23,26 +28,30 @@ import {
   ReportService,
   UserService,
   InformService,
+  TimeSheetService,
+  UserDepartmentService,
 } from './services';
 import { JwtStrategy, WsGuard } from './strategys';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { join } from 'path';
-import config from '@config/config';
-import { UserTimesheet } from './entities/timesheet.enetity';
+import {
+  DataResource,
+  DataDepartment,
+  UserTimesheet,
+  UserDepartment,
+} from './entities';
+
 @Module({
   imports: [
     PassportModule,
     JwtModule.register(jwtModuleOptions),
     RedisModule.forRoot(redisModuleOptions),
     ScheduleModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      ...config.postgresql,
-      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
-      migrationsTableName: 'migration',
-      migrations: ['src/migration/*.ts'],
-    }),
-    TypeOrmModule.forFeature([UserTimesheet]),
+    TypeOrmModule.forRoot(typeOrmOptions),
+    TypeOrmModule.forFeature([
+      DataResource,
+      DataDepartment,
+      UserTimesheet,
+      UserDepartment,
+    ]),
   ],
   controllers: [
     AppController,
@@ -63,8 +72,11 @@ import { UserTimesheet } from './entities/timesheet.enetity';
     AuthService,
     UserService,
     InformService,
+    TimeSheetService,
+    UserDepartmentService,
     TimeSheetSocket,
     TimeSheetSchedule,
+    KeyCloakSchedule,
   ],
   exports: [AuthService],
 })

@@ -1,15 +1,18 @@
 import config from '@config/config';
-import { Issuer, BaseClient } from 'openid-client';
+import KcAdminClient from '@keycloak/keycloak-admin-client';
 export default class KcClient {
-  static client: BaseClient;
-  static async init() {
-    const { clientId, clientSecret, redirectUri, issuer } = config.keycloak;
-    const keycloakIssuer = await Issuer.discover(issuer);
-    this.client = new keycloakIssuer.Client({
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uris: [redirectUri],
-      response_types: ['code'],
+  static kcAdminClient = new KcAdminClient();
+  static async auth() {
+    this.kcAdminClient.setConfig({
+      baseUrl: config.keycloak.clientBaseUrl,
+      realmName: config.keycloak.realm,
+    });
+    await this.kcAdminClient.auth({
+      username: config.keycloak.username,
+      password: config.keycloak.password,
+      grantType: config.keycloak.clientGrantType,
+      clientId: config.keycloak.clientId,
+      clientSecret: config.keycloak.clientSecret,
     });
   }
 }
