@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import NodeKeycloak from 'node-keycloak';
 import { Repository } from 'typeorm';
-import { UserDepartmentService } from './department.service';
 
 @Injectable()
 export class AuthService {
@@ -14,7 +13,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(UserDepartment)
     private readonly userDepartmentRepository: Repository<UserDepartment>,
-    private readonly userDepartmentService: UserDepartmentService,
   ) {}
 
   async signin(code: string, session_state: string): Promise<IUserResultInfo> {
@@ -30,7 +28,7 @@ export class AuthService {
       const userDepartement = await this.userDepartmentRepository.findOneBy({
         userid: userinfo.sub,
       });
-      console.log('userDepartement', userDepartement);
+
       return {
         expires_at: result.expires_at,
         access_token: this.jwtService.sign({
@@ -39,6 +37,7 @@ export class AuthService {
           username: keyCloakUserInfo.preferred_username,
           departmentIds: userDepartement.departmentids,
           idToken: result.id_token,
+          resources: keyCloakUserInfo.resourceIds,
         }),
         refresh_expires_in: result.refresh_expires_in as string,
         refresh_token: result.refresh_token,
@@ -48,6 +47,7 @@ export class AuthService {
         avatar: userinfo.avatar as string,
         title: userinfo.title as string,
         hiredDate: userinfo.hiredDate as string,
+        resources: keyCloakUserInfo.resourceIds,
       };
     } catch (e) {
       console.log('Login error: ', e);

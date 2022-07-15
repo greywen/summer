@@ -142,4 +142,11 @@ export class UserService {
     }
     return users;
   }
+
+  async updateUserResource(userid: string, resourceIds: string) {
+    const user = await KcClient.kcAdminClient.users.findOne({ id: userid });
+    user.attributes['resourceIds'] = resourceIds;
+    await KcClient.kcAdminClient.users.update({ id: userid }, user);
+    return user;
+  }
 }

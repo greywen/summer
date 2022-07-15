@@ -9,6 +9,7 @@ export interface IUserResultInfo {
   avatar: string;
   title: string;
   hiredDate: string;
+  resources: string[];
 }
 
 export class IUserInfo {
@@ -17,6 +18,7 @@ export class IUserInfo {
   username: string;
   departmentIds: number[];
   idToken: string;
+  resources: string[];
 }
 
 export interface IKeyCloakUserInfo {
@@ -43,6 +45,7 @@ export interface IKeyCloakUserInfo {
   locale: string;
   family_name: string;
   email: string;
+  resourceIds: string[];
 }
 
 interface IRealmaccess {

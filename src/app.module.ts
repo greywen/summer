@@ -33,7 +33,7 @@ import {
 } from './services';
 import { JwtStrategy, WsGuard } from './strategys';
 import {
-  DataPermission,
+  DataResource,
   DataDepartment,
   UserTimesheet,
   UserDepartment,
@@ -47,7 +47,7 @@ import {
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot(typeOrmOptions),
     TypeOrmModule.forFeature([
-      DataPermission,
+      DataResource,
       DataDepartment,
       UserTimesheet,
       UserDepartment,

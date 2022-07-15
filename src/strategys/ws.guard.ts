@@ -1,3 +1,4 @@
+import config from '@config/config';
 import { CanActivate, Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 
@@ -7,7 +8,7 @@ export class WsGuard implements CanActivate {
     const bearerToken =
       context.args[0].handshake.headers.authorization.split(' ')[1];
     try {
-      const decoded = jwt.verify(bearerToken, '') as any;
+      const decoded = jwt.verify(bearerToken, config.jwt.secret) as any;
       context.args[0].data = decoded;
       return decoded;
     } catch (ex) {
