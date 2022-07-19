@@ -1,43 +1,19 @@
 import { NestRes } from '@interfaces/nestbase';
-import {
-  Controller,
-  Get,
-  UseGuards,
-  Request,
-  Param,
-  Put,
-} from '@nestjs/common';
+import { Controller, Get, UseGuards, Request, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from '@services/user.service';
 import FileData from '@core/files.data';
 import * as moment from 'moment';
-import { UserDepartmentService } from '@services/department.service';
 import { IUserMemberDto } from '@dtos/user';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly userDepartmentService: UserDepartmentService,
-  ) {}
-  @Get('today')
-  async getTodayInfo(@Request() req: NestRes) {
-    return {
-      timesheet: await this.userService.getTodayTimeSheet(req.user.username),
-      attendance: await this.userService.getUserAttendanceSummay(
-        req.user.username,
-      ),
-    };
-  }
-
+  constructor(private readonly userService: UserService) {}
   @Get('members')
   async getUserMembers(@Request() req: NestRes): Promise<IUserMemberDto[]> {
-    const departmentMembers =
-      await this.userDepartmentService.getDepartmentMembers(
-        req.user.departmentIds,
-      );
-    return departmentMembers.map((x) => {
+    const users = await this.userService.getUserMember(req.user.departmentIds);
+    return users.map((x) => {
       return <IUserMemberDto>{
         username: x.username,
         avatar: x.attributes.avatar && x.attributes.avatar[0],
@@ -69,32 +45,4 @@ export class UserController {
     }
     return [];
   }
-
-  @Put('resource')
-  async updateUser() {
-    const users = await this.userService.getUsers();
-    for (const user of users) {
-      let resourceIds = '';
-      if (user.attributes['departmentids'].includes('1')) {
-        resourceIds = '1,2';
-      } else if (
-        user.attributes['departmentids'].includes('2') ||
-        user.attributes['departmentids'].includes('3')
-      ) {
-        resourceIds = '1';
-      } else if (
-        user.attributes['departmentids'].includes('4') ||
-        user.attributes['departmentids'].includes('5')
-      ) {
-        resourceIds = '1,3';
-      } else {
-        resourceIds = '1,2,3';
-      }
-      // await this.userService.updateUserResource(user.id, resourceIds);
-    }
-  }
-  // @Get('users')
-  // async getUsers() {
-
-  // }
 }

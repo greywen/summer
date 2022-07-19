@@ -5,20 +5,12 @@ import { ITimeSheet } from '@interfaces/timesheet';
 import { Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
-import config from '@config/config';
-import { UserDepartment } from '@entities/user.department.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { intersect, now } from '@utils/utils';
+import { intersect } from '@utils/utils';
 import KcClient from '@utils/kcClient';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRedis() private readonly redis: Redis,
-    @InjectRepository(UserDepartment)
-    private readonly departmentRepository: Repository<UserDepartment>,
-  ) {}
+  constructor(@InjectRedis() private readonly redis: Redis) {}
 
   async getTodayTimeSheet(username: string) {
     const data = await this.redis.get('timesheets');
@@ -72,64 +64,12 @@ export class UserService {
     return users.find((x) => x.name === username);
   }
 
-  async generateUserDepartment() {
+  async getUserMember(departmentIds: string[]) {
     const users = await KcClient.kcAdminClient.users.find();
-    let departmentids = [];
-    for (const user of users) {
-      if (['陶智', '胡秋成'].includes(user.username)) {
-        departmentids = [3];
-      } else if (['王中伟'].includes(user.username)) {
-        departmentids = [5];
-      } else if (['王祯鹏'].includes(user.username)) {
-        departmentids = [4];
-      } else if (['王志峰'].includes(user.username)) {
-        departmentids = [1, 2, 3, 4, 5];
-      } else if (
-        ['代瓒', '谈娜', '吴美美', '张华尘', '何三星'].includes(user.username)
-      ) {
-        departmentids = [2];
-      } else {
-        departmentids = [1];
-      }
-      await this.departmentRepository.save({
-        userid: user.id,
-        departmentids: departmentids,
-        createTime: now(),
-      });
-
-      user.attributes = {
-        ...user.attributes,
-        departmentids: departmentids.join(','),
-      };
-
-      await KcClient.kcAdminClient.users.update({ id: user.id }, user);
-    }
-  }
-
-  async updateUserDepartment() {
-    const users = await KcClient.kcAdminClient.users.find();
-    let departmentids = [];
-    for (const user of users) {
-      departmentids = [1, 5];
-      // if (['陶智', '胡秋成'].includes(user.username)) {
-      //   departmentids = [2];
-      // } else if (['王中伟'].includes(user.username)) {
-      //   departmentids = [5];
-      // } else if (['王祯鹏'].includes(user.username)) {
-      //   departmentids = [4];
-      // } else if (['王志峰'].includes(user.username)) {
-      //   departmentids = [1, 2, 3, 4, 5];
-      // } else if (
-      //   ['代瓒', '谈娜', '吴美美', '张华尘', '何三星'].includes(user.username)
-      // ) {
-      //   departmentids = [1];
-      // }
-      // this.departmentRepository.create({
-      //   userid: user.id,
-      //   departmentids: departmentids,
-      //   createTime: now(),
-      // });
-    }
+    return users.filter((x) => {
+      const ids = x.attributes['departmentids'];
+      return intersect(departmentIds, ids).length > 0;
+    });
   }
 
   async getUsers(departmentids?: string[]) {

@@ -5,4 +5,3 @@ export * from './auth.service';
 export * from './user.service';
 export * from './inform.service';
 export * from './timesheet.service';
-export * from './department.service';
