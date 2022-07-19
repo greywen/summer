@@ -5,7 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import {
   AttendanceController,
   AuthController,
@@ -29,15 +28,9 @@ import {
   UserService,
   InformService,
   TimeSheetService,
-  UserDepartmentService,
 } from './services';
 import { JwtStrategy, WsGuard } from './strategys';
-import {
-  DataResource,
-  DataDepartment,
-  UserTimesheet,
-  UserDepartment,
-} from './entities';
+import { DataResource, DataDepartment, UserTimesheet } from './entities';
 
 @Module({
   imports: [
@@ -46,12 +39,7 @@ import {
     RedisModule.forRoot(redisModuleOptions),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot(typeOrmOptions),
-    TypeOrmModule.forFeature([
-      DataResource,
-      DataDepartment,
-      UserTimesheet,
-      UserDepartment,
-    ]),
+    TypeOrmModule.forFeature([DataResource, DataDepartment, UserTimesheet]),
   ],
   controllers: [
     AppController,
@@ -65,7 +53,6 @@ import {
   providers: [
     WsGuard,
     JwtStrategy,
-    AppService,
     AttendanceService,
     DingTalkService,
     ReportService,
@@ -73,7 +60,6 @@ import {
     UserService,
     InformService,
     TimeSheetService,
-    UserDepartmentService,
     TimeSheetSocket,
     TimeSheetSchedule,
     KeyCloakSchedule,

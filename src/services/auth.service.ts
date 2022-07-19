@@ -1,19 +1,12 @@
-import { UserDepartment } from '@entities/user.department.entity';
 import { IKeyCloakUserInfo, IUserResultInfo } from '@interfaces/user';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import * as jwt from 'jsonwebtoken';
 import NodeKeycloak from 'node-keycloak';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly jwtService: JwtService,
-    @InjectRepository(UserDepartment)
-    private readonly userDepartmentRepository: Repository<UserDepartment>,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   async signin(code: string, session_state: string): Promise<IUserResultInfo> {
     try {
@@ -25,9 +18,6 @@ export class AuthService {
       const keyCloakUserInfo = <IKeyCloakUserInfo>(
         jwt.decode(result.access_token)
       );
-      const userDepartement = await this.userDepartmentRepository.findOneBy({
-        userid: userinfo.sub,
-      });
 
       return {
         expires_at: result.expires_at,
@@ -35,9 +25,9 @@ export class AuthService {
           userId: keyCloakUserInfo.sub,
           dingUserId: keyCloakUserInfo.dingUserId,
           username: keyCloakUserInfo.preferred_username,
-          departmentIds: userDepartement.departmentids,
+          departmentIds: keyCloakUserInfo.departmentids?.split(',') || [],
           idToken: result.id_token,
-          resources: keyCloakUserInfo.resourceIds,
+          resources: keyCloakUserInfo.resourceIds?.split(',') || [],
         }),
         refresh_expires_in: result.refresh_expires_in as string,
         refresh_token: result.refresh_token,
@@ -47,7 +37,7 @@ export class AuthService {
         avatar: userinfo.avatar as string,
         title: userinfo.title as string,
         hiredDate: userinfo.hiredDate as string,
-        resources: keyCloakUserInfo.resourceIds,
+        resources: keyCloakUserInfo.resourceIds?.split(',') || [],
       };
     } catch (e) {
       console.log('Login error: ', e);

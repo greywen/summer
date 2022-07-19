@@ -16,7 +16,7 @@ export class IUserInfo {
   userId: string;
   dingUserId: string;
   username: string;
-  departmentIds: number[];
+  departmentIds: string[];
   idToken: string;
   resources: string[];
 }
@@ -45,7 +45,8 @@ export interface IKeyCloakUserInfo {
   locale: string;
   family_name: string;
   email: string;
-  resourceIds: string[];
+  resourceIds: string;
+  departmentids: string;
 }
 
 interface IRealmaccess {
