@@ -28,6 +28,7 @@ export enum AttendanceState {
   'J' = 7,
   'L' = 8,
   'A' = 9,
+  'Anomalous' = 10,
 }
 
 export enum AttendanceCheckType {
@@ -36,9 +37,10 @@ export enum AttendanceCheckType {
 }
 
 export enum TimeResultType {
-  'Normal' = 'Normal', //正常
+  'Normal' = 'Normal', //正常打卡
   'Late' = 'Late', // 迟到
   'Early' = 'Early', // 早退
+  'NotSigned' = 'NotSigned', // 没有打卡
 }
 
 export enum GroupId {

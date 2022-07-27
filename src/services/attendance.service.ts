@@ -135,6 +135,11 @@ export class AttendanceService {
     return (await this.getLeaveTimeByMinutes()) >= 7.5 * 60;
   }
 
+  // 是否请假一天
+  private async whetherLeave() {
+    return (await this.getLeaveTimeByMinutes()) > 0;
+  }
+
   private async getLeaveTimeByMinutes() {
     const leaveType = [
       AttendanceState.C,
@@ -161,7 +166,7 @@ export class AttendanceService {
     const { date } = this.findNextNotHolodayDate(
       moment(this.tiems.start).format('YYYY-MM-DD'),
     );
-    const startTime = moment(this.tiems.start).format('YYYY-MM-DD 09:00:01');
+    const startTime = moment(this.tiems.start).format('YYYY-MM-DD 00:00:01');
     const endTime = moment(date).format('YYYY-MM-DD 08:59:59');
     const reports = await this.dingTalkApi.getReports(
       startTime,
@@ -279,6 +284,18 @@ export class AttendanceService {
         _attendance.value += Math.abs(subTime);
       }
     }
+    // 没打卡没请假视为异常需要人工审核
+    const whetherLeave = await this.whetherLeave();
+    const notSigned =
+      attendance.attendance_result_list.filter((x) => {
+        return x.time_result === TimeResultType.NotSigned;
+      }).length >= 2;
+
+    if (notSigned && !whetherLeave) {
+      _attendance.state = AttendanceState.Anomalous;
+      _attendance.value = null;
+    }
+
     this.attendances.push({
       state: _attendance.state,
       value: _attendance.state === AttendanceState.O ? null : _attendance.value,

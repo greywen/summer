@@ -40,7 +40,7 @@ export interface IAttendanceListResult {
 export interface IUserAttendanceRecordResult {
   check_type: AttendanceCheckType;
   plan_check_time: string;
-  user_check_time: string;
+  user_check_time: number;
   time_result: TimeResultType;
   userId: string;
 }
