@@ -10,9 +10,12 @@ import {
   IDingTalkUserResult,
   IGetReportSimplelistParams,
   IGetReportSimplelistResult,
+  IGetUserLeaveStatusBodyData,
+  IGetUserLeaveStatusResult,
   IReportSimpleListResult,
   IReportTemplate,
   IReportTemplateResult,
+  IUserAttendance,
   IUserAttendanceResult,
 } from '@interfaces/dingTalk';
 import * as moment from 'moment';
@@ -183,7 +186,7 @@ export default class DingTalkApi {
         body: JSON.stringify(bodyData),
       },
     ).then((res): Promise<IUserAttendanceResult> => res.json());
-    return res.result;
+    return res.result as IUserAttendance;
   }
 
   /**
@@ -260,6 +263,25 @@ export default class DingTalkApi {
         body: JSON.stringify(bodyData),
       },
     ).then((res): Promise<IGetReportSimplelistResult> => res.json());
+    return res;
+  }
+
+  /**
+   * 获取用户请假状态
+   * @param bodyData
+   * @returns
+   */
+  async getLeaveStatus(bodyData: IGetUserLeaveStatusBodyData) {
+    bodyData.offset = 0;
+    bodyData.size = 20;
+    const token = await this.getDingTalkAccessToken();
+    const res = await fetch(
+      `${this.apiUrl}/topapi/attendance/getleavestatus?access_token=${token}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(bodyData),
+      },
+    ).then((res): Promise<IGetUserLeaveStatusResult> => res.json());
     return res;
   }
 }

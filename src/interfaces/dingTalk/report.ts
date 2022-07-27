@@ -106,3 +106,27 @@ interface Datalist {
 
 export type IGetReportSimplelistResult =
   IDingTalkBaseResult<IGetReportSimplelistResultData>;
+
+export interface IGetUserLeaveStatusBodyData {
+  userid_list: string;
+  start_time: number;
+  end_time: number;
+  offset?: number;
+  size?: number;
+}
+
+export interface IGetUserLeaveStatusResultData {
+  has_more: boolean;
+  leave_status: [
+    {
+      duration_percent: number;
+      duration_unit: string;
+      end_time: number;
+      start_time: number;
+      userid: string;
+    },
+  ];
+}
+
+export type IGetUserLeaveStatusResult =
+  IDingTalkBaseResult<IGetUserLeaveStatusResultData>;
