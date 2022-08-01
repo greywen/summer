@@ -51,16 +51,16 @@ export class AttendanceController {
 
   @Put('/update/custom')
   async updateCustomAttendance(@Body() updateDto: IAttendanceCustomUpdateDto) {
-    const date = moment().format('YYYY-MM');
-    const { userId, index, datas } = updateDto;
-    let attendances = await FileData.readCustomAttendances(date);
+    const { userId, index, datas, date } = updateDto;
+    const _date = moment(date).format('YYYY-MM');
+    let attendances = await FileData.readCustomAttendances(_date);
     attendances = attendances.map((x: IUserAttendances) => {
       if (x.id === userId) {
         x.attendances[index] = datas;
       }
       return x;
     });
-    const result = await FileData.writeCustomAttendances(date, attendances);
+    const result = await FileData.writeCustomAttendances(_date, attendances);
     return result;
   }
 }

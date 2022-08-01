@@ -8,4 +8,5 @@ export interface IAttendanceCustomUpdateDto {
   userId: string;
   index: number;
   datas: any[];
+  date: string;
 }
