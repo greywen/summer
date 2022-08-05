@@ -12,6 +12,7 @@ import {
   TimeSheetController,
   UserController,
   InformController,
+  CodeController,
 } from './controllers';
 import {
   jwtModuleOptions,
@@ -28,9 +29,16 @@ import {
   UserService,
   InformService,
   TimeSheetService,
+  CodeService,
 } from './services';
 import { JwtStrategy, WsGuard } from './strategys';
-import { DataResource, DataDepartment, UserTimesheet } from './entities';
+import {
+  DataResource,
+  DataDepartment,
+  UserTimesheet,
+  Language,
+  QuestionBank,
+} from './entities';
 
 @Module({
   imports: [
@@ -39,7 +47,13 @@ import { DataResource, DataDepartment, UserTimesheet } from './entities';
     RedisModule.forRoot(redisModuleOptions),
     ScheduleModule.forRoot(),
     TypeOrmModule.forRoot(typeOrmOptions),
-    TypeOrmModule.forFeature([DataResource, DataDepartment, UserTimesheet]),
+    TypeOrmModule.forFeature([
+      DataResource,
+      DataDepartment,
+      UserTimesheet,
+      Language,
+      QuestionBank,
+    ]),
   ],
   controllers: [
     AppController,
@@ -49,6 +63,7 @@ import { DataResource, DataDepartment, UserTimesheet } from './entities';
     TimeSheetController,
     UserController,
     InformController,
+    CodeController,
   ],
   providers: [
     WsGuard,
@@ -59,6 +74,7 @@ import { DataResource, DataDepartment, UserTimesheet } from './entities';
     AuthService,
     UserService,
     InformService,
+    CodeService,
     TimeSheetService,
     TimeSheetSocket,
     TimeSheetSchedule,
