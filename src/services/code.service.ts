@@ -34,7 +34,10 @@ export class CodeService {
     const command = `code="${code}"
       cat <<< "$code" > ${language.file}
       ${language.cmd}
-    `;
+    `
+      .split('${code}')
+      .join(code);
+    console.log('command \n ', command);
     return command;
   }
 

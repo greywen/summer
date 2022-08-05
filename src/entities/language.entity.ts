@@ -12,7 +12,7 @@ export class Language {
   iamge: string; // 镜像名 node
   @Column('varchar', { length: 50 })
   file: string; // 保存文件名 index.js
-  @Column('varchar', { length: 50 })
+  @Column('text', { default: null })
   cmd: string; // 运行代码的命令 node index.js
   @Column('smallint')
   timeout: number; // 运行超时时间 秒 60
