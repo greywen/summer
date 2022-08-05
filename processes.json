@@ -4,7 +4,7 @@
       "name": "summer",
       "script": "./dist/main.js",
       "cwd": "./",
-      "instances": "1",
+      "instances": "2",
       "exec_mode": "cluster",
       "max_restarts": "10",
       "error_file": "./logs/err.log",

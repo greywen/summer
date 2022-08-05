@@ -4,3 +4,4 @@ export * from './auth.controller';
 export * from './timesheet.controller';
 export * from './user.controller';
 export * from './inform.controller';
+export * from './code.controller';

@@ -46,3 +46,20 @@ export function formatDate(
 export function now(format = 'YYYY-MM-DD HH:mm:ss') {
   return moment().format(format);
 }
+
+const timeSleep = (time: number): Promise<null> => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(null);
+    }, time);
+  });
+};
+
+/**
+ *
+ * @param second 等待秒数
+ * @returns
+ */
+export const sleep = (second: number) => {
+  return timeSleep(second * 1000);
+};
