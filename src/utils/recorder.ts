@@ -41,10 +41,12 @@ class Recorder {
   public async run() {
     const item = this.queueList.shift();
     if (item) {
-      const result = await item.fn().finally(() => {
-        this.run();
-      });
-      this.resultList.push({ id: item.id, data: result });
+      try {
+        const result = await item.fn();
+        this.resultList.push({ id: item.id, data: result });
+      } finally {
+        await this.run();
+      }
     } else {
       this.running = false;
     }

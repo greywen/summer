@@ -78,7 +78,7 @@ export class CodeController {
     });
 
     while (!result) {
-      await sleep(0.1);
+      await sleep(0.2);
       result = recorder.get(id);
 
       waitTime++;
