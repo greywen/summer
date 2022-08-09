@@ -51,11 +51,7 @@ export class CodeController {
         testcase,
       );
 
-      const _result = await this.codeService.run(
-        language,
-        codeCommand,
-        language.timeout * 1000,
-      );
+      const _result = await this.codeService.run(languageId, codeCommand);
       result.push(_result);
 
       if (once || !_result.isSuccess) {
@@ -92,13 +88,7 @@ export class CodeController {
 
   async runImplement(body: ICodeRunBody) {
     const { code, languageId } = body;
-    const language = await this.codeService.getLanguage(languageId);
-    const codeCommand = await this.codeService.prepareCode(language, code);
-    return await this.codeService.run(
-      language,
-      codeCommand,
-      language.timeout * 1000,
-    );
+    return await this.codeService.run(languageId, code);
   }
 
   @Get('languages')
