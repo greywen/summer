@@ -63,3 +63,9 @@ const timeSleep = (time: number): Promise<null> => {
 export const sleep = (second: number) => {
   return timeSleep(second * 1000);
 };
+
+export const matchCaseResult = (key: string, value: string) => {
+  const matchList = value.match(new RegExp(`${key}: (.+?)\n`));
+  if (matchList?.length > 1) return matchList[1];
+  return null;
+};

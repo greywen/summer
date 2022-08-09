@@ -19,7 +19,16 @@ export interface IQuestionDto {
   code: string;
 }
 
-export interface ICodeResult {
+export interface ICodeRunResult {
   isSuccess: boolean;
   data: any;
+}
+
+export interface IRunCaseResult {
+  comments: string;
+  input: string;
+  output: string;
+  codeOutput?: string;
+  elapsedTime?: string;
+  logs?: string;
 }

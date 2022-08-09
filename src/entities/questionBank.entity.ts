@@ -21,6 +21,7 @@ export class QuestionBank {
 }
 
 export class IQuestionCase {
-  case: any;
-  assert: any;
+  comments: string;
+  input: any;
+  output: any;
 }

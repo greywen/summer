@@ -37,29 +37,12 @@ export class CodeController {
   }
 
   async runByCaseImplement(body: ICodeRunBody) {
-    const { code, questionId, languageId, once } = body;
-
-    const question = await this.codeService.getQuestion(questionId);
-    const language = await this.codeService.getLanguage(languageId);
-    const result = [];
-
-    for (const testcase of question.cases) {
-      const codeCommand = await this.codeService.prepareRunCommand(
-        language,
-        code,
-        question.entry,
-        testcase,
-      );
-
-      const _result = await this.codeService.run(languageId, codeCommand);
-      result.push(_result);
-
-      if (once || !_result.isSuccess) {
-        break;
-      }
+    const { code, questionId, languageId } = body;
+    if (!languageId || !questionId || !code) {
+      return '';
     }
 
-    return result;
+    return await this.codeService.runCodeByCase(body);
   }
 
   @Post('run')
