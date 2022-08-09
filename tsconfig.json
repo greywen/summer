@@ -50,6 +50,9 @@
       ],
       "@entities/*": [
         "./src/entities/*"
+      ],
+      "@models/*": [
+        "./src/models/*"
       ]
     }
   }

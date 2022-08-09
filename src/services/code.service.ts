@@ -1,15 +1,15 @@
-import { Language } from '@entities/language.entity';
+import config from '@config/config';
+import { ICodeResult } from '@dtos/code';
 import { IQuestionCase, QuestionBank } from '@entities/questionBank.entity';
+import { LanguageModel } from '@models/language.model';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import spawnPromise from '@utils/spawnPromise';
+import { httpGet, httpPost } from '@utils/httpRequest';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class CodeService {
   constructor(
-    @InjectRepository(Language)
-    private readonly languageRepository: Repository<Language>,
     @InjectRepository(QuestionBank)
     private readonly questionRepository: Repository<QuestionBank>,
   ) {}
@@ -21,24 +21,23 @@ export class CodeService {
   }
 
   async getLanguage(languageId: number) {
-    return await this.languageRepository.findOneBy({
-      id: languageId,
-    });
+    const languages = await this.getLanguages();
+    return languages.find((x) => x.id == languageId);
   }
 
   async getLanguages() {
-    return await this.languageRepository.find();
+    return await httpGet<LanguageModel[]>(
+      `${config.services.codeService}/languages`,
+    );
   }
 
-  async prepareCode(language: Language, code: string) {
-    const command = `code="${code}"
-      cat <<< "$code" > ${language.file}
-      ${language.cmd}
-    `
-      .split('${code}')
-      .join(code);
-    console.log('command \n ', command);
-    return command;
+  prepareCodeCommands(language: LanguageModel, code: string) {
+    const commands = `${language.beforInjectionCodeCmd}
+      code="${code.replace(/"/g, '\\"')}"
+      cat <<< "$code" > ${language.fileName}
+      ${language.afterInjectionCodeCmd}
+    `;
+    return commands;
   }
 
   async prepareTestCaseCode(
@@ -53,7 +52,7 @@ export class CodeService {
   }
 
   async prepareRunCommand(
-    language: Language,
+    language: LanguageModel,
     code: string,
     entry: string,
     cases: IQuestionCase,
@@ -64,34 +63,15 @@ export class CodeService {
       language.captureCode,
     );
     code += testCaseCode;
-    return await this.prepareCode(language, code);
+    return await this.prepareCodeCommands(language, code);
   }
 
-  async run(
-    language: Language,
-    codeCommand: string,
-    timeout: number,
-  ): Promise<any> {
-    return await spawnPromise(
-      'docker',
-      [
-        'run',
-        '--rm',
-        '-i',
-        `--memory=${language.memory}m`,
-        `--cpuset-cpus=${language.cpuset}`,
-        language.iamge,
-        '/bin/bash',
-        '-c',
-        codeCommand,
-      ],
-      { timeout: timeout },
-    )
-      .then((data) => {
-        return { isSuccess: true, data: data };
-      })
-      .catch((error) => {
-        return { isSuccess: false, data: error };
-      });
+  async run(languageId: number, code: string): Promise<any> {
+    return await httpPost<ICodeResult>(`${config.services.codeService}/run`, {
+      body: JSON.stringify({
+        languageId: languageId,
+        code: code,
+      }),
+    });
   }
 }

@@ -18,3 +18,8 @@ export interface IQuestionDto {
   desribe: string;
   code: string;
 }
+
+export interface ICodeResult {
+  isSuccess: boolean;
+  data: any;
+}

@@ -6,6 +6,9 @@ interface IConfig {
     port: number;
     environment: ServerEnvironment;
   };
+  services: {
+    codeService: string;
+  };
   dingTalk: {
     bossId: string;
     conversationId: string;
@@ -74,6 +77,7 @@ export default <IConfig>{
     port: config.get('server.port'),
     environment: config.get('server.environment'),
   },
+  services: config.get('services'),
   dingTalk: {
     bossId: config.get('dingTalk.bossId'),
     conversationId: config.get('dingTalk.conversationId'),

@@ -51,7 +51,6 @@ import {
       DataResource,
       DataDepartment,
       UserTimesheet,
-      Language,
       QuestionBank,
     ]),
   ],
