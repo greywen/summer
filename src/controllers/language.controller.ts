@@ -1,22 +1,34 @@
-import { ICodeRunBody, IQuestionDto } from '@dtos/code';
-import { Controller, UseGuards, Post, Body, Get, Param } from '@nestjs/common';
+import { ICodeRunBody } from '@dtos/code';
+import {
+  Controller,
+  UseGuards,
+  Post,
+  Body,
+  Get,
+  Request,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { CodeService } from '@services/code.service';
+import { LanguageService } from '@services/language.service';
 import recorder from '@utils/recorder';
 import { sleep } from '@utils/utils';
 import { v4 as uuid } from 'uuid';
 import { ICodeLanguageDto } from '@dtos/code';
+import { NestRes } from '@interfaces/nestbase';
 const MAX_WAITING_TIME = 360;
 
 @UseGuards(AuthGuard('jwt'))
-@Controller('code')
-export class CodeController {
-  constructor(private readonly codeService: CodeService) {}
+@Controller('language')
+export class LanguageController {
+  constructor(private readonly languageService: LanguageService) {}
   @Post('run/case')
-  async runByCase(@Body() body: ICodeRunBody): Promise<any> {
+  async runByCase(
+    @Body() body: ICodeRunBody,
+    @Request() req: NestRes,
+  ): Promise<any> {
     const id = uuid();
     let waitTime = 0;
     let result = null;
+    body.userId = req.user.userId;
 
     recorder.add({
       id: id,
@@ -42,7 +54,7 @@ export class CodeController {
       return '';
     }
 
-    return await this.codeService.runCodeByCase(body);
+    return await this.languageService.runCodeByCase(body);
   }
 
   @Post('run')
@@ -71,12 +83,12 @@ export class CodeController {
 
   async runImplement(body: ICodeRunBody) {
     const { code, languageId } = body;
-    return await this.codeService.run(languageId, code);
+    return await this.languageService.run(languageId, code);
   }
 
   @Get('languages')
   async getLanguages() {
-    const data = await this.codeService.getLanguages();
+    const data = await this.languageService.getLanguageList();
     return data.map((x) => {
       return {
         id: x.id,
@@ -85,16 +97,5 @@ export class CodeController {
         version: x.version,
       } as ICodeLanguageDto;
     });
-  }
-
-  @Get('question/:questionId')
-  async getQuestion(@Param('questionId') questionId: string) {
-    const data = await this.codeService.getQuestion(questionId);
-    return {
-      id: data.id,
-      name: data.name,
-      desribe: data.describe,
-      code: data.code,
-    } as IQuestionDto;
   }
 }

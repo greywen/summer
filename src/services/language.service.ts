@@ -1,34 +1,31 @@
 import config from '@config/config';
 import { ICodeRunResult, ICodeRunBody, IRunCaseResult } from '@dtos/code';
-import { IQuestionCase, QuestionBank } from '@entities/questionBank.entity';
+import { QuestionAnswer } from '@entities/questionAnswer.entity';
+import { IQuestionCase } from '@entities/questionBank.entity';
 import { LanguageModel } from '@models/language.model';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { httpGet, httpPost } from '@utils/httpRequest';
-import { matchCaseResult } from '@utils/utils';
+import { matchCaseResult, now } from '@utils/utils';
 import { Repository } from 'typeorm';
+import { QuestionBankService } from './questionBank.service';
 
 @Injectable()
-export class CodeService {
+export class LanguageService {
   constructor(
-    @InjectRepository(QuestionBank)
-    private readonly questionRepository: Repository<QuestionBank>,
+    @InjectRepository(QuestionAnswer)
+    private readonly answerRepository: Repository<QuestionAnswer>,
+    private readonly questionBankService: QuestionBankService,
   ) {}
 
-  async getQuestion(questionId: string) {
-    return await this.questionRepository.findOneBy({
-      id: questionId,
-    });
-  }
-
   async getLanguage(languageId: number) {
-    const languages = await this.getLanguages();
+    const languages = await this.getLanguageList();
     return languages.find((x) => x.id == languageId);
   }
 
-  async getLanguages() {
+  async getLanguageList() {
     return await httpGet<LanguageModel[]>(
-      `${config.services.codeService}/languages`,
+      `${config.services.languageService}/languages`,
     );
   }
 
@@ -42,6 +39,7 @@ export class CodeService {
       .replace('${entry}', entry)
       .replace('${input}', cases.input);
     code += testCaseCode;
+
     return code;
   }
 
@@ -54,37 +52,58 @@ export class CodeService {
   }
 
   async runCodeByCase(params: ICodeRunBody) {
-    const { code, questionId, languageId, once } = params;
+    const { code, questionId, languageId, once, userId } = params;
 
-    const question = await this.getQuestion(questionId);
+    const question = await this.questionBankService.getQuestion(questionId);
     const language = await this.getLanguage(languageId);
+    const entry = question.entryCodes.find((x) => x.languageId === languageId);
+    const cases = question.cases.filter((x) => x.languageId === languageId);
 
     const result = [] as IRunCaseResult[];
-    for (const testcase of question.cases) {
+    const recordResults = [];
+    for (const testcase of cases) {
       const codeCommand = await this.prepareCodeCase(
         language,
         code,
-        question.entry,
+        entry.function,
         testcase,
       );
 
       const _result = await this.run(languageId, codeCommand);
+
       result.push({
         ...testcase,
         ...this.extractCaseResult(_result.data),
         logs: _result.data,
       });
 
+      recordResults.push({
+        ...testcase,
+        ...this.extractCaseResult(_result.data),
+      });
+
       if (once || !_result.isSuccess) {
         break;
       }
     }
+
+    await this.answerRepository.save([
+      {
+        userId: userId,
+        questionId: questionId,
+        code: code,
+        languageId: languageId,
+        createTime: now(),
+        result: JSON.stringify(recordResults),
+      },
+    ]);
+
     return result;
   }
 
   async run(languageId: number, code: string): Promise<ICodeRunResult> {
     return await httpPost<ICodeRunResult>(
-      `${config.services.codeService}/run`,
+      `${config.services.languageService}/run`,
       {
         body: JSON.stringify({
           languageId: languageId,

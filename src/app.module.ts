@@ -12,7 +12,9 @@ import {
   TimeSheetController,
   UserController,
   InformController,
-  CodeController,
+  LanguageController,
+  QuestionBankController,
+  QuestionAnswerController,
 } from './controllers';
 import {
   jwtModuleOptions,
@@ -29,15 +31,17 @@ import {
   UserService,
   InformService,
   TimeSheetService,
-  CodeService,
+  LanguageService,
+  QuestionBankService,
+  QuestionAnswerService,
 } from './services';
 import { JwtStrategy, WsGuard } from './strategys';
 import {
   DataResource,
   DataDepartment,
   UserTimesheet,
-  Language,
   QuestionBank,
+  QuestionAnswer,
 } from './entities';
 
 @Module({
@@ -52,6 +56,7 @@ import {
       DataDepartment,
       UserTimesheet,
       QuestionBank,
+      QuestionAnswer,
     ]),
   ],
   controllers: [
@@ -62,7 +67,9 @@ import {
     TimeSheetController,
     UserController,
     InformController,
-    CodeController,
+    LanguageController,
+    QuestionAnswerController,
+    QuestionBankController,
   ],
   providers: [
     WsGuard,
@@ -73,7 +80,9 @@ import {
     AuthService,
     UserService,
     InformService,
-    CodeService,
+    LanguageService,
+    QuestionBankService,
+    QuestionAnswerService,
     TimeSheetService,
     TimeSheetSocket,
     TimeSheetSchedule,

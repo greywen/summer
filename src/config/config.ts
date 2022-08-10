@@ -7,7 +7,7 @@ interface IConfig {
     environment: ServerEnvironment;
   };
   services: {
-    codeService: string;
+    languageService: string;
   };
   dingTalk: {
     bossId: string;
