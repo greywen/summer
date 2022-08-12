@@ -14,6 +14,10 @@ export class QuestionAnswer {
   code: string;
   @Column('text', { nullable: true })
   result: string;
+  @Column('boolean', { nullable: true })
+  isPassed: boolean;
+  @Column('double precision', { nullable: true })
+  elapsedTime: number;
   @Column('timestamp')
   createTime: string;
 }

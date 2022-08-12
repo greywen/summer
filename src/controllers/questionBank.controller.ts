@@ -1,4 +1,3 @@
-import { IQuestionDto } from '@dtos/code';
 import {
   Controller,
   UseGuards,
@@ -19,6 +18,7 @@ import {
 import { QuestionBankService } from '@services/questionBank.service';
 import { NestRes } from '@interfaces/nestbase';
 import { QuestionAnswerService } from '@services/questionAnswer.service';
+import { Resources } from '@constants/resources';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('question')
@@ -29,30 +29,23 @@ export class QuestionBankController {
   ) {}
 
   @Get('/list')
-  async getQuestionList() {
-    const data = await this.questionBankService.getQuestionList();
-    return data.map((x) => {
-      return {
-        id: x.id,
-        name: x.name,
-        createTime: x.createTime,
-        level: x.level,
-      } as IQuestionDto;
-    });
+  async getQuestionList(@Request() req: NestRes) {
+    const authorized = req.user.resources.includes(Resources.updateQuestion);
+    return await this.questionBankService.getQuestionList(
+      req.user.userId,
+      authorized,
+    );
   }
 
   @Get('/:questionId')
   async getQuestion(@Param('questionId') questionId: string) {
-    const data = await this.questionBankService.getQuestion(questionId);
-    return {
-      id: data.id,
-      name: data.name,
-      desribe: data.describe,
-      entrys: data.entryCodes,
-    } as IQuestionDto;
+    return await this.questionBankService.getQuestion(questionId);
   }
 
   verifyQuestion(question: ICreateQuestionBankBody) {
+    if (!question.name) {
+      throw new HttpException('题目名称不能为空', HttpStatus.BAD_REQUEST);
+    }
     try {
       JSON.parse(JSON.stringify(question.cases));
       JSON.parse(JSON.stringify(question.entryCodes));
@@ -61,21 +54,25 @@ export class QuestionBankController {
     }
   }
 
-  @Post('/add')
+  @Post()
   async createQuestion(
     @Body() body: ICreateQuestionBankBody,
     @Request() req: NestRes,
   ) {
     this.verifyQuestion(body);
+    body.userId = req.user.userId;
+    body.userName = req.user.username;
     return await this.questionBankService.createQuestion(body);
   }
 
-  @Put('update')
+  @Put()
   async updateQuestion(
     @Body() body: IUpdateQuestionBankBody,
     @Request() req: NestRes,
   ) {
     this.verifyQuestion(body);
+    body.userId = req.user.userId;
+    body.userName = req.user.username;
     return await this.questionBankService.updateQuestion(body);
   }
 }

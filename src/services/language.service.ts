@@ -55,12 +55,20 @@ export class LanguageService {
     const { code, questionId, languageId, once, userId } = params;
 
     const question = await this.questionBankService.getQuestion(questionId);
+
+    if (!question.enabled) {
+      return { isSuccess: false, message: '题目暂时不能作答，请稍后再试' };
+    }
+
     const language = await this.getLanguage(languageId);
     const entry = question.entryCodes.find((x) => x.languageId === languageId);
     const cases = question.cases.filter((x) => x.languageId === languageId);
 
     const result = [] as IRunCaseResult[];
     const recordResults = [];
+    let isPassed = false,
+      elapsedTime = 0;
+
     for (const testcase of cases) {
       const codeCommand = await this.prepareCodeCase(
         language,
@@ -86,17 +94,30 @@ export class LanguageService {
         break;
       }
     }
+    if (!once) {
+      const passedResult = result.filter((x) => {
+        elapsedTime += parseFloat(x.elapsedTime);
+        return (
+          JSON.stringify(`${x.output}`.replace(/\s/g, '')) ===
+          JSON.stringify(`${x.codeOutput}`.replace(/\s/g, ''))
+        );
+      });
 
-    await this.answerRepository.save([
-      {
-        userId: userId,
-        questionId: questionId,
-        code: code,
-        languageId: languageId,
-        createTime: now(),
-        result: JSON.stringify(recordResults),
-      },
-    ]);
+      isPassed = passedResult.length === result.length;
+
+      await this.answerRepository.save([
+        {
+          userId: userId,
+          questionId: questionId,
+          code: code,
+          languageId: languageId,
+          createTime: now(),
+          result: JSON.stringify(recordResults),
+          elapsedTime,
+          isPassed,
+        },
+      ]);
+    }
 
     return result;
   }

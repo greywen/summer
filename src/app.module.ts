@@ -42,6 +42,7 @@ import {
   UserTimesheet,
   QuestionBank,
   QuestionAnswer,
+  QuestionContributor,
 } from './entities';
 
 @Module({
@@ -57,6 +58,7 @@ import {
       UserTimesheet,
       QuestionBank,
       QuestionAnswer,
+      QuestionContributor,
     ]),
   ],
   controllers: [

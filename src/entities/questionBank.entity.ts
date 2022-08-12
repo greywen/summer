@@ -14,7 +14,9 @@ export class QuestionBank {
   describe?: string; // 题目描述
   @Column('jsonb', { array: false, default: () => "'[]'", nullable: true })
   cases?: IQuestionCase[]; // 测试cases
-  @Column('date')
+  @Column('boolean', { nullable: true })
+  enabled: boolean; // 是否展示
+  @Column('timestamp')
   createTime: string;
 }
 

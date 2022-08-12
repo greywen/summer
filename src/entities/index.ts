@@ -4,3 +4,4 @@ export * from './timesheet.enetity';
 export * from './language.entity';
 export * from './questionBank.entity';
 export * from './questionAnswer.entity';
+export * from './questionContributor.entity';

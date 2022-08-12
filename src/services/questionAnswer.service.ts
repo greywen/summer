@@ -11,15 +11,21 @@ export class QuestionAnswerService {
   ) {}
   async getUserLastQuestionAnswer(
     questionId: string,
-    languageId: number,
     userId: string,
+    languageId?: number,
   ) {
-    return await this.answerRepository.find({
-      where: {
-        questionId: questionId,
-        languageId: languageId,
-        userId: userId,
-      },
+    const where = {
+      questionId,
+      languageId,
+      userId,
+    };
+
+    if (!languageId) {
+      delete where.languageId;
+    }
+
+    return await this.answerRepository.findOne({
+      where: where,
       order: { createTime: 'DESC' },
     });
   }

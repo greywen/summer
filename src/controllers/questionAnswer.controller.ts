@@ -16,13 +16,10 @@ export class QuestionAnswerController {
   ) {
     const data = await this.questionAnswerService.getUserLastQuestionAnswer(
       questionId,
-      languageId,
       req.user.userId,
+      languageId,
     );
 
-    if (data.length > 0) {
-      return data[0].code;
-    }
-    return null;
+    return data?.code || null;
   }
 }
