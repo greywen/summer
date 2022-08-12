@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+
 export async function httpRequest<T>(
   input: RequestInfo | URL,
   init?: RequestInit,

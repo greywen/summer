@@ -5,4 +5,6 @@ export * from './auth.service';
 export * from './user.service';
 export * from './inform.service';
 export * from './timesheet.service';
-export * from './code.service';
+export * from './language.service';
+export * from './questionBank.service';
+export * from './questionAnswer.service';

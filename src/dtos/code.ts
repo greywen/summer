@@ -1,8 +1,11 @@
+import { IEntryCode } from '@entities/questionBank.entity';
+
 export interface ICodeRunBody {
   once?: boolean;
   code: string;
   questionId: string;
   languageId: number;
+  userId: string;
 }
 
 export interface ICodeLanguageDto {
@@ -16,7 +19,9 @@ export interface IQuestionDto {
   id: string;
   name: string;
   desribe: string;
-  code: string;
+  createTime: string;
+  level: number;
+  entrys: IEntryCode[];
 }
 
 export interface ICodeRunResult {
