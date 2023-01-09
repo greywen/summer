@@ -21,9 +21,9 @@ export class AttendanceController {
     const dingdingAttendances = await FileData.readAttendances(month);
     const customAttendances = await FileData.readCustomAttendances(month);
     const attendances = dingdingAttendances.map((ul: IUserAttendances) => {
-      customAttendances
-        .find((x) => x.id === ul.id)
-        .attendances.forEach((x: IAttendances[], i) => {
+      const cAttendances = customAttendances.find((x) => x.id === ul.id);
+      if (cAttendances)
+        cAttendances?.attendances.forEach((x: IAttendances[], i) => {
           if (x !== null) {
             ul.attendances[i] = x;
           }
